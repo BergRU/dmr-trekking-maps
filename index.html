@@ -3,720 +3,483 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="DMR Trekking — карта штаба для радистов поисково-спасательных отрядов: где группы, кто давно не выходил на связь, где от штаба есть связь и сколько до заката. Ноутбук и телефон, без интернета.">
+<meta name="description" content="DMR Trekking — карта штаба для радистов поисково-спасательных отрядов: где группы, кто давно не выходил на связь и где от штаба есть связь. Ноутбук и телефон, без интернета.">
 <title>DMR Trekking</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Rubik:wght@500;600;700&display=swap">
 <style>
+/* Макет: страница собрана из тех же панелей, что и программа (тёплый чёрный, оранжевый шеврон, радиус 6px, системный шрифт);
+   главное — тур по настоящим кадрам программы с метками-подсказками, слева список шагов в виде панели «Трекеры». */
 :root{
-  --bg:#F6F4EF; --bg-2:#EEEAE1; --surface:#FFFFFF; --surface-2:#FAF8F4;
-  --ink:#13202B; --ink-2:#33434F; --muted:#5A6874; --line:#DDD8CE; --line-2:#C6BEB0;
-  --accent:#E8772E; --accent-ink:#B04E14; --accent-soft:#FBE6D6; --on-accent:#13202B;
-  --ok:#2F8F4E; --warn:#A87C00; --bad:#C0392B; --off:#86919A; --focus:#B04E14;
-  --shadow:0 1px 2px rgba(19,32,43,.06),0 10px 28px rgba(19,32,43,.07);
-  --m-land:#F1ECE1; --m-forest:#D2DEC2; --m-tree:#B7CAA2; --m-contour:#C4B08D; --m-contour-2:#A58D66;
-  --m-water:#AACDE1; --m-water-2:#82B0CD; --m-road:#FFFDF8; --m-road-2:#BFAD8E; --m-dirt:#937C58;
-  --m-house:#C7BBA9; --m-grid:#24323D; --m-label:#46525C; --m-halo:#F1ECE1;
-  --h-vis:#3E9E52; --h-edge:#DDAA18; --h-shadow:#9A2B2B; --h-op:.28;
-  --r1:#2563C9; --r2:#7A3FC2; --r3:#0A7C70; --r4:#C2386F;
-  --bs:#3F4D58; --bs-sector:rgba(63,77,88,.11);
-  --font-head:'Rubik','Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
-  --font-body:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
-  --font-mono:'IBM Plex Mono',ui-monospace,'Cascadia Mono',Consolas,'Courier New',monospace;
-  --radius:14px;
-  color-scheme:light;
+  --bg:#1b1718; --panel:#231f20; --bg2:#322c2d; --fg:#eeeae8; --muted:#a39b98; --line:#4a4241;
+  --accent:#f7941d; --on-accent:#111111; --link:#f7a540;
+  --ok:#43a047; --warn:#fbc02d; --bad:#e53935; --off:#78909c;
+  --shadow:0 2px 10px rgba(0,0,0,.35);
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,"Courier New",monospace;
+  --r:6px;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0F1A22; --bg-2:#13202B; --surface:#182733; --surface-2:#1C2D3A;
-    --ink:#EEF0ED; --ink-2:#C8D2DA; --muted:#97A7B3; --line:#263949; --line-2:#3A5268;
-    --accent:#E8772E; --accent-ink:#F39A5C; --accent-soft:#3A2618; --on-accent:#13202B;
-    --ok:#4CC26A; --warn:#E9BE3A; --bad:#F06A5A; --off:#7E8B95; --focus:#F39A5C;
-    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.28);
-    --m-land:#1A2731; --m-forest:#1C3427; --m-tree:#284838; --m-contour:#4C5C52; --m-contour-2:#677862;
-    --m-water:#1F4A63; --m-water-2:#2E6686; --m-road:#5E6C75; --m-road-2:#2A3842; --m-dirt:#8E7D5E;
-    --m-house:#3B4853; --m-grid:#D5DDE3; --m-label:#B8C4CD; --m-halo:#1A2731;
-    --h-vis:#4FC46A; --h-edge:#F1C232; --h-shadow:#E0524A; --h-op:.30;
-    --r1:#6EA2FF; --r2:#B78BF5; --r3:#35C9B3; --r4:#F27BAE;
-    --bs:#C3CDD5; --bs-sector:rgba(195,205,213,.11);
-    color-scheme:dark;
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#e4e8ec; --panel:#ffffff; --bg2:#eef1f4; --fg:#1f2328; --muted:#5b6570; --line:#ccd3da;
+    --accent:#f7941d; --on-accent:#111111; --link:#b55f00;
+    --ok:#2e7d32; --warn:#c88a00; --bad:#c62828; --off:#607d8b;
+    --shadow:0 2px 10px rgba(20,30,40,.14);
+    color-scheme:light;
   }
 }
-:root[data-theme="dark"]{
-  --bg:#0F1A22; --bg-2:#13202B; --surface:#182733; --surface-2:#1C2D3A;
-  --ink:#EEF0ED; --ink-2:#C8D2DA; --muted:#97A7B3; --line:#263949; --line-2:#3A5268;
-  --accent:#E8772E; --accent-ink:#F39A5C; --accent-soft:#3A2618; --on-accent:#13202B;
-  --ok:#4CC26A; --warn:#E9BE3A; --bad:#F06A5A; --off:#7E8B95; --focus:#F39A5C;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.28);
-  --m-land:#1A2731; --m-forest:#1C3427; --m-tree:#284838; --m-contour:#4C5C52; --m-contour-2:#677862;
-  --m-water:#1F4A63; --m-water-2:#2E6686; --m-road:#5E6C75; --m-road-2:#2A3842; --m-dirt:#8E7D5E;
-  --m-house:#3B4853; --m-grid:#D5DDE3; --m-label:#B8C4CD; --m-halo:#1A2731;
-  --h-vis:#4FC46A; --h-edge:#F1C232; --h-shadow:#E0524A; --h-op:.30;
-  --r1:#6EA2FF; --r2:#B78BF5; --r3:#35C9B3; --r4:#F27BAE;
-  --bs:#C3CDD5; --bs-sector:rgba(195,205,213,.11);
-  color-scheme:dark;
+:root[data-theme="light"]{
+  --bg:#e4e8ec; --panel:#ffffff; --bg2:#eef1f4; --fg:#1f2328; --muted:#5b6570; --line:#ccd3da;
+  --accent:#f7941d; --on-accent:#111111; --link:#b55f00;
+  --ok:#2e7d32; --warn:#c88a00; --bad:#c62828; --off:#607d8b;
+  --shadow:0 2px 10px rgba(20,30,40,.14);
+  color-scheme:light;
 }
 
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:72px}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:76px}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;overflow-x:hidden}
-img,svg{max-width:100%}
-a{color:var(--accent-ink);text-underline-offset:3px}
-a:hover{text-decoration-thickness:2px}
-h1,h2,h3,h4{font-family:var(--font-head);line-height:1.15;margin:0;color:var(--ink);text-wrap:balance}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--font);overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+img{max-width:100%;display:block}
+a{color:var(--link);text-underline-offset:3px}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance}
 p{margin:0}
-:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
-.mono{font-family:var(--font-mono);font-feature-settings:"tnum" 1}
+small,.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 .vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* single outer wrapper with side gutters */
 .page{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.wrap{max-width:1180px;margin:0 auto}
-.band{background:var(--bg-2);box-shadow:0 0 0 100vmax var(--bg-2);clip-path:inset(0 -100vmax)}
+.wrap{max-width:1240px;margin:0 auto}
 
-/* nav */
-.top{position:sticky;top:0;z-index:20;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax);border-bottom:1px solid var(--line)}
-.top .wrap{display:flex;align-items:center;gap:16px;min-height:60px}
-.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:700;font-size:18px;color:var(--ink);text-decoration:none;white-space:nowrap}
-.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:var(--on-accent);flex:none}
-.nav{flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+/* панель — как в программе */
+.panel{background:var(--panel);border-radius:var(--r);box-shadow:var(--shadow)}
+.phead{display:flex;align-items:center;gap:8px;padding:9px 12px;font-weight:600;font-size:15px}
+.grip{color:var(--muted);font-size:14px;letter-spacing:-2px;user-select:none}
+.pcount{background:var(--bg2);color:var(--accent);border-radius:10px;padding:0 8px;font-size:12px;font-weight:600}
+.badge{display:inline-block;background:var(--bg2);border-radius:10px;padding:0 8px;font-size:12px;color:var(--muted)}
+.vpn{display:inline-block;background:color-mix(in srgb,var(--bad) 22%,transparent);color:var(--bad);border-radius:8px;padding:0 6px;font-size:11px;font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 15px var(--font);padding:8px 14px;border-radius:4px;border:1px solid var(--line);background:var(--bg2);color:var(--fg);text-decoration:none;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+/* верхняя строка */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding-block:8px}
+.topbar{display:flex;align-items:center;gap:6px;padding:5px}
+.brand{display:flex;align-items:center;gap:8px;padding:5px 10px 5px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg2);color:var(--fg);text-decoration:none;font-weight:700;white-space:nowrap}
+.brand i{width:24px;height:24px;border-radius:4px;background:var(--accent);display:grid;place-items:center;color:var(--on-accent);font-style:normal;font-size:14px}
+.nav{flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
-.nav ul{display:flex;gap:4px;list-style:none;margin:0;padding:4px 24px 4px 0}
-.nav a{display:block;padding:6px 10px;border-radius:8px;color:var(--ink-2);text-decoration:none;font-size:15px;white-space:nowrap}
-.nav a:hover{background:var(--bg-2);color:var(--ink)}
-.theme-btn{flex:none;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font:500 14px var(--font-body);cursor:pointer}
-.theme-btn svg{width:16px;height:16px}
-@media (max-width:560px){.theme-btn span{display:none}.brand .brand-name{display:none}}
+.nav ul{display:flex;gap:2px;list-style:none;margin:0;padding:0}
+.nav a{display:block;padding:6px 10px;border-radius:4px;color:var(--fg);text-decoration:none;font-size:14px;white-space:nowrap}
+.nav a:hover{background:var(--bg2)}
+.theme{flex:none;font:14px var(--font);padding:6px 10px;border-radius:4px;border:1px solid var(--line);background:var(--bg2);color:var(--fg);cursor:pointer;white-space:nowrap}
+.theme:hover{border-color:var(--accent)}
+@media (max-width:640px){.brand span{display:none}.theme .tl{display:none}}
 
-/* sections */
-section{padding:72px 0}
-@media (max-width:700px){section{padding:52px 0}}
-.eyebrow{font:600 13px var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:12px}
-.h2{font-size:clamp(28px,4.2vw,42px);font-weight:600;max-width:24ch}
-.lead{font-size:clamp(17px,1.9vw,20px);color:var(--ink-2);max-width:62ch;margin-top:16px}
-.sec-head{margin-bottom:36px}
+section{padding-block:44px}
+@media (max-width:700px){section{padding-block:32px}}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px}
+.h2{font-size:clamp(24px,3.2vw,32px);font-weight:700;max-width:30ch}
+.lead{font-size:17px;color:var(--fg);opacity:.92;max-width:64ch;margin-top:10px}
+.shead{margin-bottom:22px}
 
-/* hero */
-.hero{padding:48px 0 28px}
-.hero h1{font-size:clamp(46px,8vw,88px);font-weight:700;letter-spacing:-.01em}
-.hero h1 .tick{display:inline-block;width:.32em;height:.32em;border-radius:50%;background:var(--accent);margin-left:.08em;vertical-align:.12em}
-.hero .lead{max-width:60ch}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;padding:0;list-style:none}
-.chips li{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-size:15px;color:var(--ink-2)}
-.chips svg{width:16px;height:16px;color:var(--accent-ink);flex:none}
+/* шапка */
+.hero{padding-block:24px 8px}
+.hero h1{font-size:clamp(34px,5.4vw,56px);font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hero h1 i{font-style:normal;font-size:.4em;font-weight:600;color:var(--muted);letter-spacing:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:16px 0 0;padding:0}
+.chips li{display:inline-flex;align-items:center;gap:7px;background:var(--panel);border-radius:var(--r);box-shadow:var(--shadow);padding:6px 11px;font-size:14px}
+.chips li::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--ok)}
 
-/* demo */
-.demo{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;margin-top:28px;align-items:start}
-@media (max-width:960px){.demo{grid-template-columns:minmax(0,1fr)}}
-.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
-.toolbar .lbl{font-size:14px;color:var(--muted);margin-right:2px}
-.tog{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:6px 12px;font:500 14px var(--font-body);cursor:pointer;min-height:36px}
-.tog .sw{width:10px;height:10px;border-radius:3px;border:1.5px solid currentColor;flex:none}
-.tog[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.tog[aria-pressed="true"] .sw{background:var(--accent);border-color:var(--accent)}
-.tog:hover{border-color:var(--ink)}
-.tog.play{margin-left:auto}
-.tog.play svg{width:14px;height:14px}
-.map{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:var(--m-land);box-shadow:var(--shadow)}
-.map svg{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
-.alarmbar{position:absolute;left:10px;right:10px;top:10px;display:none;align-items:center;gap:10px;background:var(--bad);color:#fff;border-radius:10px;padding:7px 8px 7px 12px;font-size:14px;line-height:1.3;box-shadow:0 4px 14px rgba(0,0,0,.2)}
-.alarmbar.on{display:flex}
-.alarmbar b{font-weight:600}
-.alarmbar .txt{flex:1;min-width:0}
-.alarmbar button{border:0;background:#fff;color:#8E1E14;font:600 13px var(--font-body);border-radius:7px;padding:6px 10px;cursor:pointer;flex:none}
-.alarmbar .dot{width:10px;height:10px;border-radius:50%;background:#fff;flex:none}
-.statusbar{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin-top:10px;font-size:14px;color:var(--ink-2)}
-.statusbar .it{display:inline-flex;align-items:center;gap:6px}
-.statusbar svg{width:16px;height:16px;color:var(--accent-ink)}
-.sunline{padding:2px 8px;border-radius:6px}
-.sunline.warn{background:rgba(221,170,24,.18)}
-.sunline.late{background:rgba(232,119,46,.22)}
-.sunline.dark{background:rgba(192,57,43,.2)}
-.legend{display:inline-flex;flex-wrap:wrap;gap:4px 12px}
-.legend .k{display:inline-flex;align-items:center;gap:6px}
-.legend .sq{width:12px;height:12px;border-radius:3px}
-.caption{font-size:14px;color:var(--muted);margin-top:8px}
-.tag{display:inline-block;font:600 11px var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);border:1px solid currentColor;border-radius:5px;padding:1px 6px;vertical-align:2px}
+/* тур */
+.tour{display:grid;grid-template-columns:280px minmax(0,1fr);gap:12px;margin-top:22px;align-items:start}
+@media (max-width:980px){.tour{grid-template-columns:minmax(0,1fr)}}
+.steps{list-style:none;margin:0;padding:0 8px 8px}
+.steps .grp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 6px 4px}
+.step{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:2px 9px;align-items:center;width:100%;text-align:left;padding:7px 8px;border:0;border-left:3px solid var(--line);border-radius:4px;background:none;color:var(--fg);font:inherit;cursor:pointer}
+.step:hover{background:var(--bg2)}
+.step[aria-selected="true"]{background:var(--bg2);border-left-color:var(--accent)}
+.step .dot{width:12px;height:12px;border-radius:50%}
+.step b{font-size:15px}
+.step .age{font-size:12px;color:var(--muted)}
+.step small{grid-column:2/4;font-size:13px;line-height:1.35}
+@media (max-width:980px){
+  .steps{display:flex;gap:6px;overflow-x:auto;padding:0 8px 10px;scrollbar-width:thin}
+  .steps .grp{display:none}
+  .steps li{flex:none}
+  .step{grid-template-columns:12px auto;white-space:nowrap}
+  .step small,.step .age{display:none}
+}
+.shot{position:relative;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);background:var(--panel);aspect-ratio:1440/900;max-width:100%}
+.shot img{width:100%;height:100%;object-fit:cover}
+.hs{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;border:2px solid #fff;background:var(--accent);color:#111;font:700 14px var(--font);display:grid;place-items:center;cursor:pointer;box-shadow:0 0 0 4px rgba(247,148,29,.35),0 2px 6px rgba(0,0,0,.5);padding:0}
+.hs:hover,.hs[aria-expanded="true"]{background:#fff}
+@media (prefers-reduced-motion: no-preference){.hs{animation:pulse 2.4s ease-out infinite}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(247,148,29,.6),0 2px 6px rgba(0,0,0,.5)}70%{box-shadow:0 0 0 12px rgba(247,148,29,0),0 2px 6px rgba(0,0,0,.5)}100%{box-shadow:0 0 0 0 rgba(247,148,29,0),0 2px 6px rgba(0,0,0,.5)}}
+@media (max-width:620px){.hs{width:22px;height:22px;font-size:12px}}
+.tip{position:absolute;z-index:3;max-width:min(300px,70%);background:var(--panel);color:var(--fg);border-radius:var(--r);box-shadow:0 4px 18px rgba(0,0,0,.5);padding:9px 12px;font-size:14px;line-height:1.4;pointer-events:none}
+.tip b{display:block;margin-bottom:2px}
+.cap{margin-top:12px;padding:12px 14px}
+.cap h3{font-size:18px}
+.cap p{margin-top:4px;max-width:80ch}
+.notes{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:6px 18px}
+.notes li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;font-size:14px;line-height:1.4}
+.notes li span{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#111;font-weight:700;font-size:12px;display:grid;place-items:center}
+.switch{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.switch[hidden]{display:none}
+.seg{font:14px var(--font);padding:5px 10px;border-radius:4px;border:1px solid var(--line);background:var(--bg2);color:var(--fg);cursor:pointer}
+.seg[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
 
-/* map svg classes */
-.m-land{fill:var(--m-land)}
-.m-forest{fill:var(--m-forest)}
-.m-tree{fill:var(--m-tree)}
-.m-cont{fill:none;stroke:var(--m-contour);stroke-width:1;stroke-linecap:round}
-.m-cont.idx{stroke:var(--m-contour-2);stroke-width:1.6}
-.m-water{fill:none;stroke:var(--m-water);stroke-linecap:round;stroke-linejoin:round}
-.m-water-edge{fill:none;stroke:var(--m-water-2);stroke-linecap:round;stroke-linejoin:round}
-.m-lake{fill:var(--m-water);stroke:var(--m-water-2);stroke-width:1.5}
-.m-road{fill:none;stroke:var(--m-road);stroke-width:6;stroke-linecap:round}
-.m-road-c{fill:none;stroke:var(--m-road-2);stroke-width:9;stroke-linecap:round}
-.m-dirt{fill:none;stroke:var(--m-dirt);stroke-width:2.2;stroke-dasharray:7 5;stroke-linecap:round}
-.m-house{fill:var(--m-house)}
-.m-peak{fill:var(--m-label)}
-.m-text{fill:var(--m-label);font-family:var(--font-body);font-size:calc(11px * var(--k,1));paint-order:stroke;stroke:var(--m-halo);stroke-width:calc(3px * var(--k,1));stroke-linejoin:round}
-.m-grid line{stroke:var(--m-grid);stroke-opacity:.42;stroke-width:1;vector-effect:non-scaling-stroke}
-.m-grid rect{fill:none;stroke:var(--m-grid);stroke-opacity:.8;stroke-width:1.6;stroke-dasharray:6 4;vector-effect:non-scaling-stroke}
-.m-grid text{fill:var(--m-grid);font:600 calc(11px * var(--k,1)) var(--font-mono);paint-order:stroke;stroke:var(--m-halo);stroke-width:calc(3px * var(--k,1))}
-.hz{opacity:var(--h-op)}
-.hz .c0{fill:var(--h-vis)} .hz .c1{fill:var(--h-edge)} .hz .c2{fill:var(--h-shadow)}
-.hz-ring{fill:none;stroke:var(--ink);stroke-opacity:.55;stroke-width:1.4;stroke-dasharray:5 5;vector-effect:non-scaling-stroke}
-.bs-sec{fill:var(--bs-sector);stroke:var(--bs);stroke-opacity:.35;stroke-width:1;vector-effect:non-scaling-stroke}
-.trk{fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.92}
-.hit{fill:transparent;cursor:pointer}
-.mk{cursor:pointer;outline:none}
-.mk .ring{fill:none;stroke:var(--focus);stroke-width:3;opacity:0;vector-effect:non-scaling-stroke}
-.mk:focus-visible .ring,.mk.sel .ring{opacity:1}
-.mk.sel .ring{stroke:var(--ink)}
-.mk:focus-visible .ring{stroke:var(--focus)}
-.mk .body{stroke:var(--m-halo);stroke-width:2.5}
-.mk .m-text{font-size:11px;stroke-width:3px}
-.mk .num{fill:#fff;font:700 11px var(--font-body);text-anchor:middle;dominant-baseline:central;pointer-events:none}
-.mk.old .body{opacity:.55}
-.mk .halo{fill:none;stroke-width:2;opacity:0}
-.mk.talk .halo{opacity:.9;animation:pulse 1.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
-.mk .alrm{fill:none;stroke:var(--bad);stroke-width:2.5;opacity:0;stroke-dasharray:4 3}
-.mk.alarm .alrm{opacity:1}
-@keyframes pulse{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.5);opacity:0}}
-@media (prefers-reduced-motion: reduce){.mk.talk .halo{animation:none;opacity:.8}}
-.hq .body{fill:var(--accent);stroke:var(--m-halo);stroke-width:2.5}
-.hq .glyph{fill:none;stroke:var(--on-accent);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
-.bsm .body{fill:var(--surface);stroke:var(--bs);stroke-width:1.6}
-.bsm .glyph{fill:none;stroke:var(--bs);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+/* телефон */
+.phone{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:center}
+@media (max-width:820px){.phone{grid-template-columns:minmax(0,1fr)}}
+.pframe{justify-self:center;width:min(300px,100%);border-radius:28px;padding:10px;background:#0d0b0b;box-shadow:var(--shadow)}
+.pframe img{border-radius:20px;width:100%;height:auto}
+.plist{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px}
+.plist li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:10px;align-items:baseline}
+.plist li::before{content:"✓";color:var(--ok);font-weight:700}
 
-/* side panel */
-.side{display:grid;gap:12px}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-.panel h3{font:600 13px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 14px 6px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.glist{list-style:none;margin:0;padding:0 6px 8px}
-.grow{width:100%;display:grid;grid-template-columns:4px 22px minmax(0,1fr) auto;align-items:center;gap:10px;text-align:left;border:0;background:none;color:var(--ink);padding:8px 8px;border-radius:9px;cursor:pointer;font:inherit;font-size:15px;line-height:1.3}
-.grow:hover{background:var(--bg-2)}
-.grow[aria-current="true"]{background:var(--bg-2);box-shadow:inset 0 0 0 1px var(--line-2)}
-.grow .stripe{width:4px;height:30px;border-radius:2px;background:var(--ok)}
-.grow.stale .stripe{background:var(--h-edge)}
-.grow.old .stripe{background:var(--off)}
-.grow.alarm .stripe{background:var(--bad)}
-.grow .gnum{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 12px var(--font-body)}
-.grow .gname{font-weight:600;display:block}
-.grow .gsub{font-size:13px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.grow.alarm .gsub{color:var(--bad);font-weight:600}
-.grow .gage{font:500 13px var(--font-mono);color:var(--muted);white-space:nowrap}
-.card{padding:4px 14px 14px}
-.card .ct{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:600 18px var(--font-head);margin-bottom:8px}
-.card dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:14px}
-.card dt{color:var(--muted)}
-.card dd{margin:0;font-family:var(--font-mono);font-size:13.5px;color:var(--ink)}
-.card dd.txt{font-family:var(--font-body);font-size:14px}
-.card .note{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.45}
-.lamp{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
-.log{list-style:none;margin:0;padding:0 14px 12px;font-size:13.5px}
-.log li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;padding:3px 0;border-top:1px dashed var(--line);color:var(--ink-2)}
-.log li:first-child{border-top:0}
-.log .t{font-family:var(--font-mono);color:var(--muted)}
-.log .al{color:var(--bad);font-weight:600}
+/* из чего состоит */
+.chain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:820px){.chain{grid-template-columns:minmax(0,1fr)}}
+.node{padding:0 0 14px}
+.node p{padding:0 14px;font-size:15px}
+.node .who{padding:0 14px 6px;font-size:13px;color:var(--muted)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-size:14px}
+.flow span{background:var(--panel);box-shadow:var(--shadow);border-radius:var(--r);padding:5px 10px}
+.flow em{font-style:normal;color:var(--accent);font-weight:700}
 
-/* how it works */
-.how{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
-.diagram{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
-.diagram svg{display:block;width:100%;height:auto;margin:0 auto}
-.diagram svg.dg-n{max-width:460px}
-.dg-w .t1{font-size:16px}.dg-w .t2{font-size:14px}
-.dg-n .t1{font-size:14.5px}.dg-n .t2{font-size:12.5px}
-.dn{cursor:pointer;outline:none}
-.dn rect.box{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.5;transition:fill .15s,stroke .15s}
-.dn .t1{fill:var(--ink);font:600 15px var(--font-body)}
-.dn .t2{fill:var(--muted);font:400 13px var(--font-body)}
-.dn .ic{color:var(--accent-ink)}
-.dn.on rect.box{fill:var(--accent-soft);stroke:var(--accent)}
-.dn:focus-visible rect.box{stroke:var(--focus);stroke-width:3}
-.de path{fill:none;stroke:var(--line-2);stroke-width:2;transition:stroke .15s,opacity .15s}
-.de.dash path{stroke-dasharray:6 5}
-.de text{fill:var(--muted);font:500 12px var(--font-body);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
-.de.on path{stroke:var(--accent);stroke-width:2.6}
-.de.on text{fill:var(--accent-ink)}
-.diagram.focus .de:not(.on){opacity:.4}
-.dinfo{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:4px 28px;min-height:150px}
-.dinfo .k,.dinfo h3,.dinfo p:not(.gives){grid-column:1}
-.dinfo .gives{grid-column:2;grid-row:1 / span 3;align-self:start}
-@media (max-width:760px){.dinfo{grid-template-columns:minmax(0,1fr)}.dinfo .gives{grid-column:1;grid-row:auto}}
-.dinfo .k{font:600 12px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink)}
-.dinfo h3{font-size:24px;margin:6px 0 10px}
-.dinfo p{color:var(--ink-2)}
-.dinfo .gives{font-size:16px;color:var(--ink);border-left:3px solid var(--accent);padding:2px 0 2px 14px}
-.dinfo .gives b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-.principles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}
-@media (max-width:820px){.principles{grid-template-columns:minmax(0,1fr)}}
-.pr{border-left:3px solid var(--accent);padding:4px 0 4px 16px}
-.pr h3{font-size:19px;margin-bottom:6px}
-.pr p{color:var(--ink-2);font-size:16px}
-
-/* features tabs */
-.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
-.tab{border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:10px;padding:8px 12px;font:500 15px var(--font-body);cursor:pointer;display:inline-flex;align-items:center;gap:7px;min-height:42px}
-.tab svg{width:18px;height:18px;color:var(--accent-ink)}
-.tab:hover{border-color:var(--ink)}
-.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.tab[aria-selected="true"] svg{color:var(--accent)}
-.tpanel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px}
-.tpanel + .tpanel{margin-top:16px}
+/* возможности — как окно программы */
+.win{overflow:hidden}
+.whead{display:flex;align-items:center;gap:8px;padding:12px 16px 4px;font-weight:700;font-size:17px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px 0}
+.tab{font:14px var(--font);padding:6px 11px;border-radius:4px;border:1px solid var(--line);background:var(--bg2);color:var(--fg);cursor:pointer}
+.tab:hover{border-color:var(--accent)}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.tpanel{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;padding:16px}
 .tpanel[hidden]{display:none}
-@media (max-width:860px){.tpanel{grid-template-columns:minmax(0,1fr);padding:20px}}
-.tpanel h3{font-size:clamp(22px,2.8vw,28px);margin-bottom:14px}
-.flist{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.flist li{position:relative;padding-left:22px;color:var(--ink-2)}
-.flist li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
-.aside-box{display:grid;gap:14px;align-content:start}
-.fact{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.fact .n{font:500 clamp(24px,3vw,30px) var(--font-mono);color:var(--ink);line-height:1.1;display:block}
-.fact .d{font-size:14px;color:var(--muted);display:block;margin-top:4px}
-.gives-box{border-left:3px solid var(--accent);padding:2px 0 2px 14px;color:var(--ink);font-size:16px}
-.gives-box b{display:block;font:600 12px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:4px}
-.honest{font-size:14px;color:var(--muted);background:var(--bg-2);border-radius:10px;padding:10px 12px}
-.lg{display:grid;gap:6px;font-size:14px}
-.lg span{display:flex;align-items:center;gap:8px}
-.lg i{width:14px;height:14px;border-radius:3px;flex:none}
+@media (max-width:820px){.tpanel{grid-template-columns:minmax(0,1fr)}}
+.tpanel h3{font-size:18px;margin-bottom:8px}
+.flist{margin:0;padding-left:18px;display:grid;gap:6px;font-size:15px}
+.side{background:var(--bg2);border-radius:var(--r);padding:12px 14px;display:grid;gap:10px;align-content:start}
+.fact b{display:block;font-size:22px;color:var(--accent)}
+.fact span{font-size:14px;color:var(--muted)}
+.gives{border-top:1px solid var(--line);padding-top:10px;font-size:15px}
+.gives b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.honest{font-size:13px;color:var(--muted)}
+.lg{display:grid;gap:4px;font-size:14px}
+.lg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:8px;vertical-align:-1px}
 
-/* day */
-.day{list-style:none;margin:0;padding:0;counter-reset:step;display:grid;gap:0}
-.step{display:grid;grid-template-columns:56px minmax(0,1fr);gap:18px;position:relative;padding-bottom:28px}
-.step:last-child{padding-bottom:0}
-.step::before{content:"";position:absolute;left:27px;top:52px;bottom:4px;width:2px;background:var(--line-2)}
-.step:last-child::before{display:none}
-.step .no{width:56px;height:56px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);display:grid;place-items:center;font:700 22px var(--font-head);color:var(--accent-ink)}
-.step .bd{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:8px 24px}
-@media (max-width:760px){.step{grid-template-columns:40px minmax(0,1fr);gap:12px}.step .no{width:40px;height:40px;font-size:17px}.step::before{left:19px;top:40px}.step .bd{grid-template-columns:minmax(0,1fr);padding:16px}}
-.step .tm{font:500 14px var(--font-mono);color:var(--muted)}
-.step h3{font-size:21px;margin:2px 0 8px}
-.step p{color:var(--ink-2)}
-.step .sees{font-size:15px;color:var(--ink-2);background:var(--surface-2);border-radius:10px;padding:10px 12px;align-self:start}
-.step .sees b{display:block;font:600 12px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:2px}
-.daynote{font-size:14px;color:var(--muted);margin-top:16px}
+/* таблицы — как журнал программы */
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-weight:600;color:var(--muted);background:var(--bg2);padding:7px 10px;font-size:13px;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.t{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600}
+td small{display:block;margin-top:2px}
+.day td:nth-child(3){color:var(--muted);font-size:14px;min-width:180px}
+.okr td.v,.okr th.v{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.okr tr.total td{font-weight:700;border-bottom:0}
 
-/* trust */
-.trust{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-@media (max-width:980px){.trust{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:560px){.trust{grid-template-columns:minmax(0,1fr)}}
-.tcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
-.tcard svg{width:26px;height:26px;color:var(--accent-ink);margin-bottom:10px}
-.tcard h3{font-size:18px;margin-bottom:6px}
-.tcard p{font-size:15.5px;color:var(--ink-2)}
+/* надёжность */
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.check{padding:12px 14px;display:grid;grid-template-columns:22px minmax(0,1fr);gap:4px 10px}
+.check::before{content:"✓";grid-row:1/3;color:var(--ok);font-weight:800;font-size:18px;line-height:1.2}
+.check h3{font-size:16px}
+.check p{font-size:14px;color:var(--muted)}
 
-/* maps */
-.maps{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
-@media (max-width:860px){.maps{grid-template-columns:minmax(0,1fr)}}
-.okr{width:100%;border-collapse:collapse;font-size:15px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-.okr th,.okr td{padding:9px 14px;text-align:left;border-top:1px solid var(--line)}
-.okr thead th{border-top:0;font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--surface-2)}
-.okr td.v{text-align:right;font-family:var(--font-mono);white-space:nowrap}
-.okr th.v{text-align:right}
-.okr tr.total td{font-weight:600;background:var(--surface-2)}
-.btn{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:var(--on-accent);text-decoration:none;border-radius:12px;padding:13px 20px;font:600 17px var(--font-body);margin-top:22px;border:0}
-.btn:hover{filter:brightness(1.05);text-decoration:none}
-.btn svg{width:20px;height:20px}
-.lic{font-size:14px;color:var(--muted);margin-top:16px}
-.maps .lead + .lead{margin-top:12px}
+.maps{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,380px);gap:24px;align-items:start}
+@media (max-width:820px){.maps{grid-template-columns:minmax(0,1fr)}}
+.maps .btn{margin-top:16px}
+.lic{font-size:13px;color:var(--muted);margin-top:12px}
 
-/* materials */
-.mats{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;max-width:640px}
-.mat{display:grid;grid-template-columns:52px minmax(0,1fr) 24px;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow)}
-.mat:hover{border-color:var(--accent)}
-.mat .mi{width:52px;height:52px;border-radius:12px;background:var(--accent-soft);color:var(--accent-ink);display:grid;place-items:center}
-.mat .mi svg{width:26px;height:26px}
-.mat b{font:600 19px var(--font-head);display:block}
-.mat span{font-size:15px;color:var(--muted)}
-.mat .go{width:22px;height:22px;color:var(--accent-ink)}
+.mat{display:flex;align-items:center;gap:12px;padding:12px 14px;text-decoration:none;color:var(--fg);max-width:520px}
+.mat:hover{outline:1px solid var(--accent)}
+.mat i{font-style:normal;font-size:22px}
+.mat span small{display:block}
 
-/* disclaimer */
-.disc{border:1px solid var(--line-2);border-radius:var(--radius);background:var(--surface);padding:28px}
-.disc h2{font-size:clamp(24px,3vw,30px);margin-bottom:14px}
-.disc p{color:var(--ink-2);max-width:78ch}
-.disc p + p{margin-top:12px}
-footer{padding:36px 0 48px;font-size:14px;color:var(--muted)}
-footer .wrap{display:grid;gap:6px}
-footer b{color:var(--ink);font-family:var(--font-head)}
-@media print{.top,.toolbar,.tabs{display:none}.tpanel[hidden]{display:grid}}
+/* ответственность — как окно при запуске */
+.disc{max-width:760px;padding:18px 22px}
+.disc h2{font-size:22px;margin-bottom:10px}
+.disc ul{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px}
+
+footer{padding-block:24px 40px;font-size:14px;color:var(--muted)}
+footer p+p{margin-top:4px}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <defs>
-    <symbol id="i-radio" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="7" width="12" height="15" rx="2"/><path d="M9 7V2M9 11h6M9 14h6"/><circle cx="12" cy="18" r="1.2"/></g></symbol>
-    <symbol id="i-dongle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="9" width="8" height="12" rx="2"/><path d="M12 9V6M8.5 4.5a5 5 0 0 1 7 0M6 2a8.5 8.5 0 0 1 12 0"/></g></symbol>
-    <symbol id="i-laptop" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></g></symbol>
-    <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></g></symbol>
-    <symbol id="i-phones" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="8" height="15" rx="1.8"/><rect x="13" y="5" width="8" height="15" rx="1.8"/></g></symbol>
-    <symbol id="i-tracker" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.6-6-10.5a6 6 0 0 1 12 0C18 15.4 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.2"/></g></symbol>
-    <symbol id="i-map" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></g></symbol>
-    <symbol id="i-route" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 18h7a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/></g></symbol>
-    <symbol id="i-signal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-8"/><circle cx="12" cy="10" r="1.6"/><path d="M8.5 6.5a5 5 0 0 0 0 7M15.5 6.5a5 5 0 0 1 0 7M5.6 3.6a9 9 0 0 0 0 12.8M18.4 3.6a9 9 0 0 1 0 12.8"/></g></symbol>
-    <symbol id="i-tower" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8l-4 13M12 8l4 13M9.2 16h5.6M10.2 12.5h3.6"/><circle cx="12" cy="6" r="1.5"/><path d="M8 3.5a5 5 0 0 0 0 5M16 3.5a5 5 0 0 1 0 5"/></g></symbol>
-    <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16M7 18a5 5 0 0 1 10 0M12 7V4M5.6 10.6 3.8 8.8M18.4 10.6l1.8-1.8M2 14h2M20 14h2"/></g></symbol>
-    <symbol id="i-plane" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 3.5c0-1 .7-1.5 1.5-1.5s1.5.5 1.5 1.5V9l7.5 4.5V16l-7.5-2.5V18l2.5 2v1.5L12 20.5l-4 1V20l2.5-2v-4.5L3 16v-2.5L10.5 9z"/></g></symbol>
-    <symbol id="i-offline" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 12.6a10 10 0 0 1 4.2-2.4M19 12.6a10 10 0 0 0-2.3-1.6M2 9a15 15 0 0 1 4.3-2.8M22 9A15 15 0 0 0 10.8 5"/><circle cx="12" cy="20" r=".8"/></g></symbol>
-    <symbol id="i-same" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="11" height="8" rx="1.2"/><path d="M1 17h13"/><rect x="16" y="5" width="6" height="13" rx="1.4"/><path d="M14.5 10h1"/></g></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></g></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></g></symbol>
-    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></symbol>
-    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/></symbol>
-    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
-    <symbol id="i-sunny" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></symbol>
-    <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></g></symbol>
-    <symbol id="i-slides" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7 12l3-3 2 2 4-4"/></g></symbol>
-    <symbol id="i-arrow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></g></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
-    <symbol id="i-house" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/></g></symbol>
-  </defs>
-</svg>
-
 <div class="page">
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="DMR Trekking — в начало">
-      <span class="brand-mark"><svg width="18" height="18" aria-hidden="true"><use href="#i-signal"/></svg></span>
-      <span class="brand-name">DMR Trekking</span>
-    </a>
-    <nav class="nav" aria-label="Разделы страницы">
-      <ul>
-        <li><a href="#demo">Карта</a></li>
-        <li><a href="#how">Из чего состоит</a></li>
-        <li><a href="#features">Возможности</a></li>
-        <li><a href="#day">Один день поиска</a></li>
-        <li><a href="#trust">Надёжность</a></li>
-        <li><a href="#maps">Офлайн-карты</a></li>
-        <li><a href="#disclaimer">Ответственность</a></li>
-      </ul>
-    </nav>
-    <button class="theme-btn" type="button" id="themeBtn" aria-label="Переключить тему">
-      <svg aria-hidden="true"><use href="#i-moon"/></svg><span>Тёмная</span>
-    </button>
+    <div class="panel topbar">
+      <a class="brand" href="#tour"><i aria-hidden="true">☰</i><span>DMR Trekking</span></a>
+      <nav class="nav" aria-label="Разделы страницы">
+        <ul>
+          <li><a href="#tour">Программа</a></li>
+          <li><a href="#phone">Телефон</a></li>
+          <li><a href="#how">Из чего состоит</a></li>
+          <li><a href="#features">Возможности</a></li>
+          <li><a href="#day">День поиска</a></li>
+          <li><a href="#trust">Надёжность</a></li>
+          <li><a href="#disclaimer">Ответственность</a></li>
+        </ul>
+      </nav>
+      <button class="theme" type="button" id="themeBtn" aria-label="Оформление страницы"><span class="tl">Оформление: </span><b id="themeName">Тёмное</b></button>
+    </div>
   </div>
 </header>
 
-<main id="top">
+<main>
 
-<section class="hero" id="demo" aria-labelledby="h-hero">
+<section class="hero" id="tour" aria-labelledby="h1">
   <div class="wrap">
-    <p class="eyebrow">Для штабов поисково-спасательных отрядов</p>
-    <h1 id="h-hero">DMR Trekking<span class="tick" aria-hidden="true"></span></h1>
-    <p class="lead">Карта штаба для радистов. На одной карте видно, где группы, кто давно не выходил на связь, и куда от штаба достаёт связь. Работает на ноутбуке и на телефоне — без интернета.</p>
+    <h1 id="h1">DMR Trekking <i>карта штаба поисково-спасательного отряда</i></h1>
+    <p class="lead">Одна карта для радиста и штаба: где группы, кто давно не выходил на связь, где от штаба будет связь. Работает на ноутбуке и на телефоне, без интернета. Ниже — настоящие окна программы.</p>
     <ul class="chips">
-      <li><svg aria-hidden="true"><use href="#i-offline"/></svg>Работает без интернета</li>
-      <li><svg aria-hidden="true"><use href="#i-same"/></svg>Ноутбук и телефон умеют одно и то же</li>
-      <li><svg aria-hidden="true"><use href="#i-radio"/></svg>Все рации DMR на одной карте</li>
+      <li>Работает без интернета</li>
+      <li>Ноутбук и телефон умеют одно и то же</li>
+      <li>Все рации DMR на одной карте</li>
     </ul>
 
-    <div class="demo">
-      <div>
-        <div class="toolbar" role="group" aria-label="Слои мини-карты">
-          <span class="lbl">Слои:</span>
-          <button class="tog" type="button" data-layer="tracks" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Треки</button>
-          <button class="tog" type="button" data-layer="horizon" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Связь от штаба</button>
-          <button class="tog" type="button" data-layer="bs" aria-pressed="false"><span class="sw" aria-hidden="true"></span>Вышки сотовой связи</button>
-          <button class="tog" type="button" data-layer="grid" aria-pressed="false"><span class="sw" aria-hidden="true"></span>Сетка квадратов</button>
-          <button class="tog play" type="button" id="playBtn" aria-pressed="true"><svg aria-hidden="true"><use href="#i-pause"/></svg><span>Пауза</span></button>
-        </div>
-        <div class="map" id="mapBox">
-          <svg id="mapSvg" viewBox="0 0 1000 640" role="group" aria-label="Мини-карта: условная местность, штаб и четыре группы с рациями. Все данные вымышлены."></svg>
-          <div class="alarmbar" id="alarm" role="status" aria-live="polite">
-            <span class="dot" aria-hidden="true"></span>
-            <span class="txt" id="alarmTxt"></span>
-            <button type="button" id="alarmAck">Принял</button>
-          </div>
-        </div>
-        <div class="statusbar">
-          <span class="it"><svg aria-hidden="true"><use href="#i-clock"/></svg><span><span class="mono" id="clock">11:05</span> <span class="tag">пример</span></span></span>
-          <span class="it legend" id="hzLegend">
-            <span class="k"><i class="sq" style="background:var(--h-vis)"></i>связь есть</span>
-            <span class="k"><i class="sq" style="background:var(--h-edge)"></i>на грани</span>
-            <span class="k"><i class="sq" style="background:var(--h-shadow)"></i>тень за холмом</span>
-          </span>
-        </div>
-        <p class="caption">Нажми на рацию, на штаб или на вышку — откроется карточка. Это иллюстрация, а не снимок программы: местность, группы, номера, время и заряд вымышлены. Время на карте идёт быстрее настоящего.</p>
+    <div class="tour">
+      <div class="panel">
+        <div class="phead"><span class="grip" aria-hidden="true">⠿</span>Что показать<span class="pcount" id="stepCount">6</span></div>
+        <ul class="steps" role="tablist" aria-label="Кадры программы" id="steps"></ul>
       </div>
-
-      <aside class="side" aria-label="Панель групп">
-        <div class="panel">
-          <h3><span>Группы</span><span class="tag">пример</span></h3>
-          <ul class="glist" id="glist"></ul>
+      <div>
+        <div class="shot" id="shot">
+          <img id="shotImg" src="img/map.webp" width="1440" height="900" alt="">
         </div>
-        <div class="panel" id="cardPanel">
-          <h3><span>Карточка</span></h3>
-          <div class="card" id="card"></div>
+        <div class="switch" id="switch" hidden></div>
+        <div class="panel cap" aria-live="polite">
+          <h3 id="capTitle"></h3>
+          <p id="capText"></p>
+          <ol class="notes" id="notes"></ol>
         </div>
-        <div class="panel">
-          <h3><span>Журнал выхода на связь</span></h3>
-          <ul class="log" id="log"></ul>
-        </div>
-      </aside>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="band" id="how" aria-labelledby="h-how">
+<section id="phone" aria-labelledby="h-phone">
+  <div class="wrap phone">
+    <div>
+      <p class="label">Телефон</p>
+      <h2 class="h2" id="h-phone">На телефоне та же карта и те же окна</h2>
+      <p class="lead">Радист в поле видит то же, что штаб. Если ноутбука нет, штабом становится телефон: он сам принимает координаты раций через «свисток» и раздаёт карту другим телефонам по Wi-Fi штаба.</p>
+      <ul class="plist">
+        <li>Список групп внизу, карта сверху — удобно одной рукой.</li>
+        <li>Карты и рельеф переходят с ноутбука штаба, интернет не нужен.</li>
+        <li>Тревога «Проверь связь» срабатывает и при погашенном экране.</li>
+        <li>Резервная копия поиска сохраняется сама.</li>
+      </ul>
+    </div>
+    <div class="pframe"><img src="img/phone.webp" width="620" height="1354" alt="Программа на телефоне: сверху карта со спутниковым снимком, сеткой квадратов и группами, внизу список «Трекеры» с временем последней отметки."></div>
+  </div>
+</section>
+
+<section id="how" aria-labelledby="h-how">
   <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Из чего состоит</p>
+    <div class="shead">
+      <p class="label">Из чего состоит</p>
       <h2 class="h2" id="h-how">Ноутбук в штабе, телефон у радиста, рации у групп</h2>
-      <p class="lead">Ничего не нужно подключать к интернету. Рации групп работают как обычно, а программа собирает их координаты на одну карту. Наведи или нажми на часть схемы — под ней появится, что она делает.</p>
+      <p class="lead">Ничего не нужно подключать к интернету. Рации групп работают как обычно, а программа собирает их координаты на одну карту.</p>
     </div>
-    <div class="how">
-      <div class="diagram" id="diagram"></div>
-      <div class="dinfo" id="dinfo" aria-live="polite"></div>
+    <div class="chain">
+      <div class="panel node"><div class="phead"><span class="grip" aria-hidden="true">⠿</span>💻 Ноутбук штаба</div><p class="who">главная карта</p><p>Карта района, группы и их треки, журнал связи, расчёт связи от штаба. Хранит весь поиск и раздаёт карту телефонам.</p></div>
+      <div class="panel node"><div class="phead"><span class="grip" aria-hidden="true">⠿</span>📱 Телефон радиста</div><p class="who">та же карта в руке</p><p>Подключается к ноутбуку по Wi-Fi штаба. Нет ноутбука — сам становится штабом.</p></div>
+      <div class="panel node"><div class="phead"><span class="grip" aria-hidden="true">⠿</span>📻 Рации групп и «свисток»</div><p class="who">координаты из эфира</p><p>Рации DMR присылают координаты при выходе в эфир. Небольшая приставка к рации штаба («свисток») передаёт их в программу по Bluetooth.</p></div>
     </div>
-    <div class="principles">
-      <div class="pr"><h3>Без интернета</h3><p>Карты, рельеф и справочники лежат на ноутбуке и телефоне заранее. Телефоны в штабе получают всё от ноутбука по Wi-Fi штаба.</p></div>
-      <div class="pr"><h3>Ноутбук и телефон — одно и то же</h3><p>Та же карта, те же окна и те же функции. Радист в поле видит то же, что штаб, а телефон может сам стать штабом.</p></div>
-      <div class="pr"><h3>Всё в одном месте</h3><p>Где группы, журнал связи, расчёт связи, вышки сотовой связи — на одной карте, а не в разных программах и на бумаге.</p></div>
+    <div class="flow" aria-label="Путь координат">
+      <span>Рация группы</span><em>→</em><span>эфир DMR</span><em>→</em><span>рация штаба со «свистком»</span><em>→</em><span>ноутбук</span><em>→</em><span>телефоны по Wi-Fi штаба</span>
     </div>
   </div>
 </section>
 
 <section id="features" aria-labelledby="h-feat">
   <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Возможности</p>
+    <div class="shead">
+      <p class="label">Возможности</p>
       <h2 class="h2" id="h-feat">Что видит штаб и чем это помогает в поиске</h2>
     </div>
-    <div class="tabs" role="tablist" aria-label="Разделы возможностей" id="tabs">
-      <button class="tab" role="tab" type="button" id="t-radio" aria-controls="p-radio" aria-selected="true"><svg aria-hidden="true"><use href="#i-radio"/></svg>Связь и рации</button>
-      <button class="tab" role="tab" type="button" id="t-tracks" aria-controls="p-tracks" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#i-route"/></svg>Треки и поиски</button>
-      <button class="tab" role="tab" type="button" id="t-hz" aria-controls="p-hz" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#i-signal"/></svg>Радиогоризонт и покрытие</button>
-      <button class="tab" role="tab" type="button" id="t-bs" aria-controls="p-bs" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#i-tower"/></svg>Вышки и NetMonitor</button>
-      <button class="tab" role="tab" type="button" id="t-maps" aria-controls="p-maps" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#i-map"/></svg>Карты</button>
-      <button class="tab" role="tab" type="button" id="t-avia" aria-controls="p-avia" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#i-plane"/></svg>Авиа</button>
-    </div>
+    <div class="panel win">
+      <div class="whead"><span aria-hidden="true">📋</span>Возможности программы</div>
+      <div class="tabs" role="tablist" aria-label="Разделы возможностей" id="tabs">
+        <button class="tab" role="tab" type="button" id="t-radio" aria-controls="p-radio" aria-selected="true">📻 Связь и рации</button>
+        <button class="tab" role="tab" type="button" id="t-tracks" aria-controls="p-tracks" aria-selected="false" tabindex="-1">🔎 Треки и поиски</button>
+        <button class="tab" role="tab" type="button" id="t-hz" aria-controls="p-hz" aria-selected="false" tabindex="-1">📡 Радиогоризонт</button>
+        <button class="tab" role="tab" type="button" id="t-bs" aria-controls="p-bs" aria-selected="false" tabindex="-1">📶 Вышки сотовой связи</button>
+        <button class="tab" role="tab" type="button" id="t-maps" aria-controls="p-maps" aria-selected="false" tabindex="-1">🗺 Карты и погода</button>
+        <button class="tab" role="tab" type="button" id="t-avia" aria-controls="p-avia" aria-selected="false" tabindex="-1">✈ Авиа</button>
+      </div>
 
-    <div class="tpanel" role="tabpanel" id="p-radio" aria-labelledby="t-radio" tabindex="0">
-      <div>
-        <h3>Кто где и кто давно молчит</h3>
-        <ul class="flist">
-          <li>Координаты раций DMR приходят на карту сами — через небольшую приставку к рации штаба («свисток»). Ретранслятор и диспетчерская не нужны.</li>
-          <li>Журнал выхода на связь ведётся сам: кто, когда, с координатами или без. Туда же можно записать радиограмму.</li>
-          <li>Свежесть отметки видна по цвету: зелёный — моложе 3 минут, жёлтый — старше 3 минут, серый — старше 15 минут. Пока группа говорит, её метка пульсирует.</li>
-          <li>Тревога «Проверь связь»: если группа молчит дольше заданного времени, вверху появляется красная полоса и звучит сигнал.</li>
-          <li>Штаб может запросить координаты у одной рации или у всех сразу и сделать радиопроверку. Программа сама следит, чтобы запросы не забили эфир.</li>
-          <li>Свои рации отделяются от чужих: посторонние станции не появляются на карте как группы.</li>
-        </ul>
-      </div>
-      <div class="aside-box">
-        <div class="fact"><span class="n">3 и 15 мин</span><span class="d">отметка желтеет и сереет — сразу видно, чьи координаты устарели</span></div>
-        <div class="fact"><span class="n">20 мин</span><span class="d">молчания — тревога «Проверь связь» (время меняется в настройках)</span></div>
-        <div class="gives-box"><b>Что это даёт</b>Радисту не нужно сводить координаты вручную, а потерю связи с группой штаб замечает сразу.</div>
-      </div>
-    </div>
-
-    <div class="tpanel" role="tabpanel" id="p-tracks" aria-labelledby="t-tracks" tabindex="0">
-      <div>
-        <h3>Весь поиск в одном месте</h3>
-        <ul class="flist">
-          <li>Путь каждой группы рисуется треком. Видно, сколько она прошла, — одинаково на ноутбуке и телефоне.</li>
-          <li>Явные скачки GPS отсеиваются, трек можно разрезать и склеить.</li>
-          <li>Участки, метки, линии, круги и сетка квадратов рисуются прямо на карте. Длина и площадь видны сразу.</li>
-          <li>Участок или трек выгружается в навигатор группы и в Google Earth.</li>
-          <li>У каждого поиска свои группы, треки, журнал и рисунки. Закончили — поиск уходит в архив одним файлом, его можно открыть на другом ноутбуке или телефоне.</li>
-          <li>Ничего не теряется: фильтры меняют только то, что видно на экране, точки остаются в базе.</li>
-        </ul>
-      </div>
-      <div class="aside-box">
-        <div class="fact"><span class="n">1 файл</span><span class="d">на весь поиск: треки, метки, участки и журнал связи</span></div>
-        <div class="gives-box"><b>Что это даёт</b>После поиска остаётся полная картина: кто где ходил, когда выходил на связь, что отмечали на карте.</div>
-      </div>
-    </div>
-
-    <div class="tpanel" role="tabpanel" id="p-hz" aria-labelledby="t-hz" tabindex="0">
-      <div>
-        <h3>Где будет связь со штабом</h3>
-        <ul class="flist">
-          <li>Нажатие на значок штаба или на любую точку карты — и видно, куда «достаёт» связь: зелёное — видно, жёлтое — на грани, тёмно-красное — тень за холмом.</li>
-          <li>Учитываются рельеф, кривизна Земли и, по желанию, лес. Радиус — до 20 км.</li>
-          <li>Нажмёшь на место в тени — программа скажет, что закрывает связь, и что поможет: «связь есть в 600 м к западу» или «поднять антенну до 6 м».</li>
-          <li>Покрытие от штаба на круг до 60 км: где рацию группы будет слышно и до трёх мест для ретранслятора — можно искать только у дорог.</li>
-          <li>Для каждой отметки группы — «светофор» связи со штабом: будет, на грани или скорее нет, и почему: далеко, лес или гребень.</li>
-        </ul>
-      </div>
-      <div class="aside-box">
-        <div class="fact"><span class="n">до 20 км</span><span class="d">радиогоризонт от любой точки — одним нажатием</span></div>
-        <div class="fact"><span class="n">до 60 км</span><span class="d">покрытие от штаба и места для ретранслятора</span></div>
-        <div class="lg" aria-label="Цвета радиогоризонта">
-          <span><i style="background:var(--h-vis)"></i>видно — между антеннами ничего нет</span>
-          <span><i style="background:var(--h-edge)"></i>на грани — связь слабее, может рваться</span>
-          <span><i style="background:var(--h-shadow)"></i>тень — напрямую связи почти наверняка нет</span>
+      <div class="tpanel" role="tabpanel" id="p-radio" aria-labelledby="t-radio" tabindex="0">
+        <div>
+          <h3>Кто где и кто давно молчит</h3>
+          <ul class="flist">
+            <li>Координаты раций DMR приходят на карту сами, через «свисток» у рации штаба. Ретранслятор и диспетчерская не нужны.</li>
+            <li>Журнал выхода на связь ведётся сам: кто, когда, с координатами или без. Туда же записываются радиограммы.</li>
+            <li>Свежесть отметки видна по цвету: зелёная — свежая, жёлтая — старше 3 минут, серая — старше 15 минут.</li>
+            <li>Тревога «Проверь связь»: если группа молчит дольше заданного времени, вверху появляется красная полоса и звучит сигнал.</li>
+            <li>Штаб может запросить координаты у одной рации или у всех сразу. Программа следит, чтобы запросы не забили эфир.</li>
+            <li>Посторонние станции не появляются на карте как группы.</li>
+          </ul>
         </div>
-        <p class="honest">Это расчёт по рельефу, а не гарантия связи. Важные места проверяют радиопроверкой.</p>
-        <div class="gives-box"><b>Что это даёт</b>Штаб заранее видит, где группа уйдёт из связи, где поставить ретранслятор и куда выйти, чтобы связаться.</div>
+        <div class="side">
+          <div class="fact"><b class="num">3 и 15 мин</b><span>отметка желтеет и сереет — видно, чьи координаты устарели</span></div>
+          <div class="fact"><b class="num">20 мин</b><span>молчания — тревога «Проверь связь» (время меняется в настройках)</span></div>
+          <div class="gives"><b>Что это даёт</b>Радисту не нужно сводить координаты вручную, а потерю связи с группой штаб замечает сразу.</div>
+        </div>
       </div>
-    </div>
 
-    <div class="tpanel" role="tabpanel" id="p-bs" aria-labelledby="t-bs" tabindex="0">
-      <div>
-        <h3>Сотовая связь: где вышки и откуда сигнал</h3>
-        <ul class="flist">
-          <li>На карте — базовые станции сотовой связи по всей России, из реестра санитарно-эпидемиологических заключений Роспотребнадзора.</li>
-          <li>Станцию можно найти по номеру так, как его пишут операторы: с дефисом, без него или с буквами региона.</li>
-          <li>Замеры из приложения NetMonitor — оно записывает, к каким вышкам подключался телефон, — загружаются на карту. Программа показывает, где примерно работала сота и откуда она «бьёт».</li>
-          <li>Три вида показа: места станций, контуры зон или всё вместе.</li>
-          <li>Базы обновляются из интернета или с флешки, на телефоне так же, как на ноутбуке.</li>
-        </ul>
+      <div class="tpanel" role="tabpanel" id="p-tracks" aria-labelledby="t-tracks" tabindex="0" hidden>
+        <div>
+          <h3>Весь поиск в одном месте</h3>
+          <ul class="flist">
+            <li>Путь каждой группы рисуется треком, видно, сколько она прошла.</li>
+            <li>Сетка квадратов, участки, метки и линии — на карте. Сетку и треки из OziExplorer, навигаторов и Google Earth программа загружает сама.</li>
+            <li>Скачки GPS отсеиваются, трек можно разрезать и склеить.</li>
+            <li>Участок или трек выгружается в навигатор группы.</li>
+            <li>У каждого поиска свои группы, треки, журнал и рисунки. Закончили — поиск уходит в архив одним файлом.</li>
+          </ul>
+        </div>
+        <div class="side">
+          <div class="fact"><b>1 файл</b><span>на весь поиск: треки, метки, сетка и журнал связи</span></div>
+          <div class="gives"><b>Что это даёт</b>После поиска остаётся полная картина: кто где ходил, когда выходил на связь, что отмечали на карте.</div>
+        </div>
       </div>
-      <div class="aside-box">
-        <div class="fact"><span class="n">351 921</span><span class="d">базовая станция в 86 регионах</span></div>
-        <p class="honest">Расчёт по замерам — справочный. На экране всегда написано: он может сильно отличаться от действительности.</p>
-        <div class="gives-box"><b>Что это даёт</b>Когда известна последняя сота телефона пропавшего, штаб видит её на карте рядом с рельефом и треками групп.</div>
-      </div>
-    </div>
 
-    <div class="tpanel" role="tabpanel" id="p-maps" aria-labelledby="t-maps" tabindex="0">
-      <div>
-        <h3>Подробные карты без интернета</h3>
-        <ul class="flist">
-          <li>Карта OpenStreetMap всей России — на ноутбуке и телефоне: тропы, грунтовки, болота, садовые товарищества, подписи по-русски. Чёткая на любом масштабе.</li>
-          <li>Поверх любой карты — линии электропередачи, просеки, грунтовки по проходимости, лесные кварталы.</li>
-          <li>Свои карты: топографические, космоснимки, карты из других программ (OziExplorer, SAS.Planet).</li>
-          <li>Рельеф без интернета: цветная карта высот и профиль маршрута — подъём, спуск, перепад.</li>
-          <li>Просмотренные места запоминаются сами, район вокруг штаба не стирается.</li>
-          <li>Район поиска можно скачать заранее; размер виден до скачивания.</li>
-        </ul>
+      <div class="tpanel" role="tabpanel" id="p-hz" aria-labelledby="t-hz" tabindex="0" hidden>
+        <div>
+          <h3>Где будет связь со штабом</h3>
+          <ul class="flist">
+            <li>Одно нажатие на значок штаба — и видно, куда достаёт связь, с учётом рельефа и кривизны Земли.</li>
+            <li>Можно выбрать, что проверяем: две носимые рации, машину с антенной на крыше или мачту.</li>
+            <li>Нажмёшь на место в тени — программа скажет, что закрывает связь и что поможет: куда отойти или на сколько поднять антенну.</li>
+            <li>Для отметки группы — «светофор» связи со штабом: будет, на грани или скорее нет, и почему.</li>
+          </ul>
+        </div>
+        <div class="side">
+          <div class="fact"><b>до 20 км</b><span>радиогоризонт от любой точки одним нажатием</span></div>
+          <div class="lg" aria-label="Цвета радиогоризонта">
+            <span><i style="background:var(--ok)"></i>видно — между антеннами ничего нет</span>
+            <span><i style="background:var(--warn)"></i>на грани — связь слабее, может рваться</span>
+            <span><i style="background:var(--bad)"></i>тень — напрямую связи почти наверняка нет</span>
+          </div>
+          <p class="honest">Это расчёт по рельефу, а не гарантия связи. Важные места проверяют радиопроверкой.</p>
+        </div>
       </div>
-      <div class="aside-box">
-        <div class="fact"><span class="n">8 округов</span><span class="d">готовые карты OpenStreetMap по федеральным округам</span></div>
-        <div class="fact"><span class="n">25 слоёв</span><span class="d">подложек и наложений на выбор</span></div>
-        <div class="gives-box"><b>Что это даёт</b>В лесу без связи у штаба та же подробная карта, что и дома перед выездом.</div>
-      </div>
-    </div>
 
-    <div class="tpanel" role="tabpanel" id="p-avia" aria-labelledby="t-avia" tabindex="0">
-      <div>
-        <h3>Для работы с авиацией и беспилотниками</h3>
-        <ul class="flist">
-          <li>«Ковёр» — предупреждения о закрытии неба только по аэропортам рядом со штабом. Радиус задаётся, обычно 100 км.</li>
-          <li>Погода ближайших аэродромов.</li>
-          <li>Погода для полёта беспилотника на сутки: ветер у земли и на высоте 80 и 120 м, порывы, осадки, видимость, магнитная обстановка. На каждый час — «можно», «осторожно» или «нельзя» по пределам аппарата.</li>
-          <li>Зоны, где беспилотникам летать нельзя или ограничено, — на карте вокруг штаба.</li>
-          <li>Наружу уходят только примерные координаты штаба — с точностью около 11 км.</li>
-        </ul>
+      <div class="tpanel" role="tabpanel" id="p-bs" aria-labelledby="t-bs" tabindex="0" hidden>
+        <div>
+          <h3>Сотовая связь: где вышки и откуда сигнал</h3>
+          <ul class="flist">
+            <li>На карте — базовые станции сотовой связи по всей России, из реестра заключений Роспотребнадзора.</li>
+            <li>Станцию можно найти по номеру так, как его пишут операторы.</li>
+            <li>Замеры приложения NetMonitor загружаются на карту: видно, где работала сота и откуда она «бьёт».</li>
+            <li>Карты покрытия операторов — поверх любой карты.</li>
+          </ul>
+        </div>
+        <div class="side">
+          <div class="fact"><b class="num">351 921</b><span>базовая станция в 86 регионах</span></div>
+          <p class="honest">Расчёт по замерам справочный: на экране всегда написано, что он может отличаться от действительности.</p>
+          <div class="gives"><b>Что это даёт</b>Когда известна последняя сота телефона пропавшего, штаб видит её на карте рядом с треками групп.</div>
+        </div>
       </div>
-      <div class="aside-box">
-        <p class="honest">Пробная функция: включается отдельно и работает, когда есть интернет.</p>
-        <div class="gives-box"><b>Что это даёт</b>Перед вылетом беспилотника всё нужное — на одной карте с группами.</div>
+
+      <div class="tpanel" role="tabpanel" id="p-maps" aria-labelledby="t-maps" tabindex="0" hidden>
+        <div>
+          <h3>Подробные карты без интернета и погода</h3>
+          <ul class="flist">
+            <li>Карта OpenStreetMap всей России — на ноутбуке и телефоне: тропы, грунтовки, болота, садовые товарищества.</li>
+            <li>Спутниковые снимки, Генштаб, топокарты; поверх — ЛЭП, просеки, лесные кварталы.</li>
+            <li>Рельеф без интернета: карта высот и профиль маршрута.</li>
+            <li>Погода у штаба: ветер, температура, осадки по часам.</li>
+            <li>Грозы и осадки: радары с прогнозом на 2 часа, молнии, облака.</li>
+          </ul>
+        </div>
+        <div class="side">
+          <div class="fact"><b>8 округов</b><span>готовые карты OpenStreetMap по федеральным округам</span></div>
+          <div class="fact"><b>25 слоёв</b><span>подложек и наложений на выбор</span></div>
+          <p class="honest">Слоям с пометкой <span class="vpn">VPN</span> нужен VPN: без него данные не приходят.</p>
+        </div>
+      </div>
+
+      <div class="tpanel" role="tabpanel" id="p-avia" aria-labelledby="t-avia" tabindex="0" hidden>
+        <div>
+          <h3>Для работы с авиацией и беспилотниками</h3>
+          <ul class="flist">
+            <li>«Ковёр» — предупреждения о закрытии неба только по аэропортам рядом со штабом, обычно в радиусе 100 км.</li>
+            <li>Погода ближайших аэродромов.</li>
+            <li>Погода для беспилотника по часам: «можно», «осторожно» или «нельзя».</li>
+            <li>Зоны, где беспилотникам летать нельзя или ограничено.</li>
+          </ul>
+        </div>
+        <div class="side">
+          <p class="honest">Пробная функция: включается отдельно и работает, когда есть интернет.</p>
+          <div class="gives"><b>Что это даёт</b>Перед вылетом беспилотника всё нужное — на одной карте с группами.</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="band" id="day" aria-labelledby="h-day">
+<section id="day" aria-labelledby="h-day">
   <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Один день поиска</p>
+    <div class="shead">
+      <p class="label">Один день поиска</p>
       <h2 class="h2" id="h-day">Как программа работает в штабе — от развёртывания до архива</h2>
     </div>
-    <ol class="day">
-      <li class="step">
-        <span class="no" aria-hidden="true">1</span>
-        <div class="bd">
-          <div><span class="tm">07:40</span><h3>Развернули штаб</h3><p>Ноутбук открыт, на карте отмечено «Штаб здесь». Карты района и рельеф уже на месте — интернет не нужен. Телефоны в штабе подключились к той же карте по Wi-Fi. Нет ноутбука — штабом становится телефон.</p></div>
-          <p class="sees"><b>Штаб видит</b>Подробную карту района и свою точку.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="no" aria-hidden="true">2</span>
-        <div class="bd">
-          <div><span class="tm">07:55</span><h3>Пришли рации</h3><p>«Свисток» подключён к рации штаба. Группы выходят в эфир — и сами появляются в списке с координатами. Чужие станции на карту не попадают. Координаты можно разом запросить у всех.</p></div>
-          <p class="sees"><b>Штаб видит</b>Список групп и их метки на карте, у каждой — время последней отметки.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="no" aria-hidden="true">3</span>
-        <div class="bd">
-          <div><span class="tm">08:10</span><h3>Проверили связь от штаба</h3><p>Одно нажатие на значок штаба — и видно, где связь будет, а где группа уйдёт в тень за холмом. Если тени большие, программа подскажет, куда поставить ретранслятор.</p></div>
-          <p class="sees"><b>Штаб видит</b>Зелёные, жёлтые и красные зоны вокруг штаба и места для ретранслятора.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="no" aria-hidden="true">4</span>
-        <div class="bd">
-          <div><span class="tm">08:30</span><h3>Группы ушли на задачи</h3><p>На карте нарисованы участки и сетка квадратов. Участок выгружается в навигатор группы. Треки пишутся сами, видно, кто сколько прошёл.</p></div>
-          <p class="sees"><b>Штаб видит</b>Участки, треки групп и пройденное расстояние.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="no" aria-hidden="true">5</span>
-        <div class="bd">
-          <div><span class="tm">09:00 — 16:00</span><h3>Выходы на связь и тревоги</h3><p>Журнал выхода на связь ведётся сам. Группа молчит дольше заданного — красная полоса и звук. Светофор подсказывает, почему нет связи: далеко, лес или гребень. Понадобилась последняя сота телефона пропавшего — база вышек под рукой.</p></div>
-          <p class="sees"><b>Штаб видит</b>Кто давно не выходил на связь, где его последняя отметка и есть ли там связь со штабом.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="no" aria-hidden="true">6</span>
-        <div class="bd">
-          <div><span class="tm">15:30</span><h3>Группы возвращаются</h3><p>Видно, какая группа дальше всех от штаба, кто уже на обратном пути и сколько каждая прошла за день.</p></div>
-          <p class="sees"><b>Штаб видит</b>Положение и треки всех групп, кто ещё в поле.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="no" aria-hidden="true">7</span>
-        <div class="bd">
-          <div><span class="tm">19:00</span><h3>Сворачиваемся, поиск в архив</h3><p>Поиск уходит в архив одним файлом: треки, метки, участки, журнал связи. Его можно открыть на другом ноутбуке или телефоне, а на следующий день продолжить с того же места.</p></div>
-          <p class="sees"><b>Штаб видит</b>Полную картину дня — для разбора и для следующей смены.</p>
-        </div>
-      </li>
-    </ol>
-    <p class="daynote">Время у шагов — для примера.</p>
+    <div class="panel tbl">
+      <table class="day">
+        <caption class="vh">Один день поиска по шагам</caption>
+        <thead><tr><th scope="col">Время</th><th scope="col">Что происходит</th><th scope="col">Штаб видит</th></tr></thead>
+        <tbody>
+          <tr><td class="t">07:40</td><td><b>Развернули штаб.</b> Ноутбук открыт, отмечено «Штаб здесь». Карты района и рельеф уже на месте. Телефоны подключились к той же карте по Wi-Fi.</td><td>Подробную карту района и свою точку</td></tr>
+          <tr><td class="t">07:55</td><td><b>Пришли рации.</b> «Свисток» подключён к рации штаба. Группы выходят в эфир и сами появляются в списке с координатами.</td><td>Список групп и их метки на карте</td></tr>
+          <tr><td class="t">08:10</td><td><b>Проверили связь от штаба.</b> Одно нажатие на значок штаба — и видно, где группа уйдёт в тень.</td><td>Зелёные, жёлтые и красные зоны вокруг штаба</td></tr>
+          <tr><td class="t">08:30</td><td><b>Группы ушли на задачи.</b> Сетка квадратов загружена, участки выгружены в навигаторы. Треки пишутся сами.</td><td>Участки, треки групп и пройденное расстояние</td></tr>
+          <tr><td class="t">09:00–16:00</td><td><b>Выходы на связь и тревоги.</b> Журнал ведётся сам. Группа молчит дольше заданного — красная полоса и звук.</td><td>Кто давно не выходил на связь и где его последняя отметка</td></tr>
+          <tr><td class="t">15:30</td><td><b>Группы возвращаются.</b> Видно, кто дальше всех от штаба и сколько каждая прошла за день.</td><td>Положение и треки всех групп</td></tr>
+          <tr><td class="t">19:00</td><td><b>Поиск в архив.</b> Треки, метки, сетка и журнал — одним файлом. На следующий день можно продолжить с того же места.</td><td>Полную картину дня для разбора</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="honest" style="margin-top:8px">Время у шагов — для примера.</p>
   </div>
 </section>
 
 <section id="trust" aria-labelledby="h-trust">
   <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Надёжность</p>
+    <div class="shead">
+      <p class="label">Надёжность</p>
       <h2 class="h2" id="h-trust">Чтобы на программу можно было опереться</h2>
     </div>
-    <div class="trust">
-      <div class="tcard"><svg aria-hidden="true"><use href="#i-check"/></svg><h3>Проверяется автоматически</h3><p>Каждое изменение программы проверяется автоматически, а каждая версия перед выходом — на ноутбуке и телефоне.</p></div>
-      <div class="tcard"><svg aria-hidden="true"><use href="#i-offline"/></svg><h3>Всё работает без интернета</h3><p>Карты, рельеф, базы вышек и данные поиска хранятся на устройствах штаба. Копия базы сохраняется сама.</p></div>
-      <div class="tcard"><svg aria-hidden="true"><use href="#i-same"/></svg><h3>Телефон умеет то же, что ноутбук</h3><p>Одна карта и одни окна. Если ноутбук недоступен, штаб продолжает работу на телефоне.</p></div>
-      <div class="tcard"><svg aria-hidden="true"><use href="#i-shield"/></svg><h3>Данные проверены</h3><p>Карты и базы приходят с подписью разработчика. Подменённый или испорченный файл программа не поставит.</p></div>
+    <div class="checks">
+      <div class="panel check"><h3>Проверяется автоматически</h3><p>Каждое изменение проверяется автоматически, каждая версия перед выходом — на ноутбуке и телефоне.</p></div>
+      <div class="panel check"><h3>Работает без интернета</h3><p>Карты, рельеф, базы вышек и данные поиска хранятся на устройствах штаба. Копия базы сохраняется сама.</p></div>
+      <div class="panel check"><h3>Телефон умеет то же, что ноутбук</h3><p>Одна карта и одни окна. Если ноутбук недоступен, штаб продолжает работу на телефоне.</p></div>
+      <div class="panel check"><h3>Данные проверены</h3><p>Карты и базы приходят с подписью разработчика. Подменённый или испорченный файл программа не поставит.</p></div>
     </div>
   </div>
 </section>
 
-<section class="band" id="maps" aria-labelledby="h-maps">
-  <div class="wrap maps">
-    <div>
-      <p class="eyebrow">Офлайн-карты</p>
-      <h2 class="h2" id="h-maps">Карты OpenStreetMap по федеральным округам</h2>
-      <p class="lead">Готовые карты для программы — отдельный файл на каждый федеральный округ. Их скачивают заранее, пока есть интернет, а дальше они работают без сети на ноутбуке и телефоне.</p>
-      <p class="lead">Тропы, грунтовки, болота, садовые товарищества и подписи по-русски. Карта чёткая на любом масштабе.</p>
-      <a class="btn" href="maps.html"><svg aria-hidden="true"><use href="#i-download"/></svg>Скачать карты OSM</a>
-      <p class="lic">Картографические данные © участники OpenStreetMap, лицензия ODbL. <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">Подробнее о лицензии</a></p>
-    </div>
-    <table class="okr">
-      <caption class="vh">Объём карт по федеральным округам</caption>
-      <thead><tr><th scope="col">Федеральный округ</th><th scope="col" class="v">Объём</th></tr></thead>
-      <tbody>
-        <tr><td>Центральный</td><td class="v">1,25 ГБ</td></tr>
-        <tr><td>Северо-Западный</td><td class="v">1,71 ГБ</td></tr>
-        <tr><td>Южный</td><td class="v">0,48 ГБ</td></tr>
-        <tr><td>Северо-Кавказский</td><td class="v">0,20 ГБ</td></tr>
-        <tr><td>Приволжский</td><td class="v">1,37 ГБ</td></tr>
-        <tr><td>Уральский</td><td class="v">0,90 ГБ</td></tr>
-        <tr><td>Сибирский</td><td class="v">1,53 ГБ</td></tr>
-        <tr><td>Дальневосточный</td><td class="v">1,77 ГБ</td></tr>
-        <tr class="total"><td>Вся Россия</td><td class="v">9,2 ГБ</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
 
 
 <section id="disclaimer" aria-labelledby="h-disc">
   <div class="wrap">
-    <div class="disc">
-      <p class="eyebrow">Ограничение ответственности</p>
-      <h2 id="h-disc">Решения на поиске принимает штаб</h2>
-      <p>DMR Trekking — вспомогательный инструмент штаба и не заменяет регламенты отряда. Координаты, треки и расчёты (радиогоризонт, покрытие связи, замеры NetMonitor, базовые станции, погода) — справочные и могут не совпадать с действительностью. Решения на поиске принимают руководитель поиска и штаб по регламентам отряда и проверенным данным.</p>
-      <p>Программа предоставляется «как есть», без гарантий бесперебойной работы, полноты и точности данных. Разработчик не несёт ответственности за решения и действия, принятые на основе данных программы, и за их последствия — в пределах, допускаемых законом. Карты, реестры и базы третьих лиц используются на условиях их владельцев. Тот же текст программа показывает при запуске.</p>
+    <div class="panel disc">
+      <h2 id="h-disc">DMR Trekking — вспомогательный инструмент штаба</h2>
+      <ul>
+        <li><b>Данные справочные.</b> Координаты, треки и расчёты — радиогоризонт, покрытие связи, NetMonitor, базовые станции, погода — могут быть неточными, запаздывать и не совпадать с действительностью.</li>
+        <li><b>Решения принимает штаб.</b> Руководитель поиска и штаб решают по регламентам отряда и проверенным данным. Программа их не заменяет.</li>
+        <li><b>«Как есть».</b> Программа предоставляется без гарантий бесперебойной работы, полноты и точности данных. Разработчик не несёт ответственности за решения, принятые на основе данных программы, и за их последствия — в пределах, допускаемых законом.</li>
+        <li><b>Данные третьих лиц.</b> Карты, реестры и базы используются на условиях их владельцев.</li>
+      </ul>
+      <p class="honest" style="margin-top:12px">Тот же текст программа показывает при запуске.</p>
     </div>
   </div>
 </section>
@@ -726,9 +489,9 @@ footer b{color:var(--ink);font-family:var(--font-head)}
 <footer>
   <div class="wrap">
     <p><b>DMR Trekking</b> · Windows 0.7.62, Android 0.62 · ноябрь 2026</p>
-    <p>Программа для штабов поисково-спасательных отрядов. Не является официальным продуктом какой-либо организации.</p>
-    <p>Как получить программу — по запросу у разработчика.</p>
-    <p>Все примеры на странице — местность, группы, номера, время — вымышлены.</p>
+    <p>Программа для штабов поисково-спасательных отрядов. Не является официальным продуктом какой-либо организации. Как получить — по запросу у разработчика.</p>
+    <p>Кадры — настоящая программа. Сетка и треки взяты из материалов настоящего поиска; позывные заменены, дата и место не указываются. Журнал радиограмм на кадре — пример.</p>
+    <p>Подложка на кадрах — снимки Esri World Imagery; карты для скачивания — © участники OpenStreetMap.</p>
   </div>
 </footer>
 
@@ -737,805 +500,184 @@ footer b{color:var(--ink);font-family:var(--font-head)}
 <script>
 (function () {
   'use strict';
-  var NS = 'http://www.w3.org/2000/svg';
-  function $(id) { return document.getElementById(id); }
-  function el(tag, attrs, parent) {
-    var e = document.createElementNS(NS, tag);
-    if (attrs) for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) e.setAttribute(k, attrs[k]);
-    if (parent) parent.appendChild(e);
-    return e;
-  }
-  function h(tag, cls, text) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text != null) e.textContent = text;
-    return e;
-  }
-  function rng(seed) {
-    var s = seed >>> 0;
-    return function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };
-  }
-  function f1(n) { return n.toFixed(1); }
-  function comma(n, d) { return n.toFixed(d).replace('.', ','); }
-  function storeGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
-  function storeSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
-  var mqReduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
-
-  /* ---------- theme ---------- */
-  var root = document.documentElement;
-  var themeBtn = $('themeBtn');
-  function effectiveTheme() {
-    var t = root.getAttribute('data-theme');
-    if (t === 'light' || t === 'dark') return t;
-    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-  }
-  function paintThemeBtn() {
-    var dark = effectiveTheme() === 'dark';
-    themeBtn.querySelector('use').setAttribute('href', dark ? '#i-sunny' : '#i-moon');
-    themeBtn.querySelector('span').textContent = dark ? 'Светлая' : 'Тёмная';
-    themeBtn.setAttribute('aria-label', dark ? 'Включить светлую тему' : 'Включить тёмную тему');
-  }
-  var saved = storeGet('dmrt-theme');
-  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
-  paintThemeBtn();
-  themeBtn.addEventListener('click', function () {
-    var next = effectiveTheme() === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    storeSet('dmrt-theme', next);
-    paintThemeBtn();
-  });
-  if (window.matchMedia) {
-    var mqDark = window.matchMedia('(prefers-color-scheme: dark)');
-    if (mqDark.addEventListener) mqDark.addEventListener('change', paintThemeBtn);
-  }
-
-  /* ---------- terrain model (fictional) ---------- */
-  var W = 1000, H = 640, MPU = 25; // 1 map unit = 25 m
-  var HQ = { x: 420, y: 395, mast: 15 };
-  var HILLS = [
-    { x: 570, y: 285, h: 120, sx: 46, sy: 40 }, { x: 610, y: 240, h: 60, sx: 34, sy: 60 },
-    { x: 270, y: 225, h: 95, sx: 44, sy: 50 }, { x: 240, y: 270, h: 40, sx: 60, sy: 30 },
-    { x: 560, y: 520, h: 75, sx: 40, sy: 36 }, { x: 520, y: 545, h: 30, sx: 40, sy: 25 },
-    { x: 820, y: 175, h: 100, sx: 80, sy: 60 }, { x: 760, y: 120, h: 45, sx: 40, sy: 40 },
-    { x: 150, y: 540, h: 55, sx: 55, sy: 45 }, { x: 880, y: 500, h: 70, sx: 60, sy: 55 },
-    { x: 420, y: 395, h: 14, sx: 70, sy: 60 }
+  var STEPS = [
+    { id: 'map', grp: 'Карта штаба', title: 'Карта штаба', color: 'var(--ok)', age: 'главное',
+      img: 'img/map.webp', short: 'группы, треки, сетка квадратов',
+      alt: 'Карта штаба на спутниковом снимке: сетка квадратов 500 м, значок штаба, треки шести групп, слева список «Трекеры».',
+      text: 'Главный экран. Группы видны на карте вместе с треками, сетка квадратов загружена из файла поиска. Слева — список групп по отрядам с временем последней отметки.',
+      spots: [
+        { x: 10.6, y: 36.5, t: 'Список групп', d: 'Группы по отрядам. Справа — сколько минут назад была последняя отметка.' },
+        { x: 4.5, y: 25.2, t: 'Давно молчит', d: 'Ёж-1 не выходил на связь 53 минуты: строка серая. Для раций включается тревога «Проверь связь».' },
+        { x: 55.2, y: 14, t: 'Штаб', d: 'Точка штаба: от неё считаются расстояния, связь и погода.' },
+        { x: 75.6, y: 51.8, t: 'Группа и её трек', d: 'Последняя отметка группы и путь, который она прошла.' },
+        { x: 66, y: 66.6, t: 'Сетка квадратов', d: 'Сетка 500 м загружена из файла OziExplorer. Квадраты подписаны так же, как на бумажной карте штаба.' },
+        { x: 46.7, y: 2.8, t: 'Погода у штаба', d: 'Ветер и температура. Нажатие открывает прогноз по часам.' }
+      ] },
+    { id: 'group', grp: 'Карта штаба', title: 'Окошко группы', color: 'var(--ok)', age: '1 нажатие',
+      img: 'img/group.webp', short: 'где группа и когда была отметка',
+      alt: 'На карте открыто окошко группы Лиса-1 с координатами, временем отметки и кнопками «Изменить» и «Копировать».',
+      text: 'Нажатие на группу открывает её окошко: координаты, когда была последняя отметка, сколько минут назад. Координаты копируются одной кнопкой — для радиограммы или навигатора.',
+      spots: [
+        { x: 53.3, y: 26, t: 'Координаты и время', d: 'Где группа и сколько минут назад пришла отметка.' },
+        { x: 58.7, y: 32.3, t: 'Копировать', d: 'Координаты в буфер — для радиограммы или навигатора.' }
+      ] },
+    { id: 'horizon', grp: 'Связь', title: 'Связь от штаба', color: 'var(--warn)', age: '20 км',
+      img: 'img/horizon.webp', img2: 'img/horizon-window.webp', short: 'где будет связь, а где тень',
+      alt: 'Карта радиогоризонта от штаба: зелёные зоны прямой видимости, жёлтые — на грани, тёмно-красные — тень.',
+      alt2: 'Окно «Радиогоризонт от штаба»: выбор антенн, диапазон, радиус и итог по зонам.',
+      text: 'Радиогоризонт от штаба по рельефу. Зелёное — между антеннами ничего нет, жёлтое — связь на грани, тёмно-красное — тень. Здесь проверяли мачту с антенной на 10 м.',
+      spots: [
+        { x: 52.6, y: 41.4, t: 'Штаб', d: 'Отсюда считается связь. Можно выбрать: носимая рация, машина или мачта.' },
+        { x: 59, y: 26, t: 'Видно', d: 'Между антеннами ничего нет — связь вероятна.' },
+        { x: 76.4, y: 30, t: 'На грани', d: 'Луч цепляет склон или лес: связь слабее, может рваться.' },
+        { x: 28.5, y: 19.5, t: 'Тень', d: 'За горбом или гребнем — напрямую связи почти наверняка нет.' }
+      ] },
+    { id: 'messages', grp: 'Связь', title: 'Журнал связи', color: 'var(--warn)', age: 'сам',
+      img: 'img/messages.webp', short: 'кто когда выходил, радиограммы',
+      alt: 'Окно «Журнал выхода на связь»: настройка тревоги «Проверь связь» и список радиограмм от групп к штабу.',
+      text: 'Журнал выхода на связь ведётся сам. Радиограммы радист записывает здесь же: время, от кого, кому, текст. Журнал уходит в архив вместе с поиском.',
+      spots: [
+        { x: 30.6, y: 19.7, t: 'Тревога «Проверь связь»', d: 'Если станция молчит дольше 30 минут — красная полоса и сигнал, повтор каждые 5 минут.' },
+        { x: 19.6, y: 43.6, t: 'Записать радиограмму', d: 'Время подставляется само, позывные — из списка групп.' },
+        { x: 48.6, y: 66.7, t: 'Радиограммы поиска', d: 'Кто, кому и что передал. Можно выгрузить в таблицу.' }
+      ] },
+    { id: 'layers', grp: 'Карты и погода', title: 'Слои и погода', color: 'var(--off)', age: '25 слоёв',
+      img: 'img/layers.webp', short: 'подложки, грозы и осадки',
+      alt: 'Раскрыта панель «Слои»: покрытие операторов, базовые станции, группа «Грозы и осадки» со шкалой радаров, слои OSM.',
+      text: 'Панель «Слои»: карты, спутник, покрытие операторов, базовые станции. Группа «Грозы и осадки» — радары с прогнозом на 2 часа, молнии, осадки и облака со спутника.',
+      spots: [
+        { x: 90, y: 36.5, t: 'Грозы и осадки', d: 'Радары и прогноз на 2 часа — видно, куда идёт дождь.' },
+        { x: 87.5, y: 50.2, t: 'Пометка VPN', d: 'Этим слоям нужен VPN, без него данные не приходят.' },
+        { x: 85, y: 15, t: 'Покрытие операторов', d: 'Где ловит Мегафон, МТС, Билайн, Т2 — поверх любой карты.' }
+      ] }
   ];
-  var PEAKS = [0, 2, 4, 6, 8, 9];
-  function hgt(x, y) {
-    var z = 140 - 0.01 * y + 6 * Math.sin(x / 61 + 1.3) * Math.cos(y / 47 - 0.7) + 3 * Math.sin((x + 2 * y) / 37) + 1.5 * Math.cos((2 * x - y) / 23);
-    for (var i = 0; i < HILLS.length; i++) {
-      var o = HILLS[i], dx = (x - o.x) / o.sx, dy = (y - o.y) / o.sy;
-      z += o.h * Math.exp(-0.5 * (dx * dx + dy * dy));
-    }
-    return z;
-  }
-  var NR = 180, DR = 5, RAD = 370;
-  var RAYS = (function () {
-    var h0 = hgt(HQ.x, HQ.y) + HQ.mast, rays = [];
-    for (var i = 0; i < NR; i++) {
-      var a = i / NR * 2 * Math.PI, ca = Math.cos(a), sa = Math.sin(a), m = -1e9, cls = [];
-      for (var j = 0; j * DR < RAD; j++) {
-        var d = (j + 0.5) * DR, x = HQ.x + ca * d, y = HQ.y + sa * d, dm = d * MPU;
-        var g = hgt(x, y) - dm * dm / (2 * 8.5e6), c;
-        if (d < 12) c = 0;
-        else { var mg = ((g + 1.5 - h0) / dm - m) * dm; c = mg >= 0 ? 0 : (mg >= -7 ? 1 : 2); }
-        cls.push(c);
-        var at = (g - h0) / dm;
-        if (at > m) m = at;
-      }
-      rays.push(cls);
-    }
-    return rays;
-  })();
-  function clsAt(x, y) {
-    var dx = x - HQ.x, dy = y - HQ.y, d = Math.sqrt(dx * dx + dy * dy);
-    if (d >= RAD) return 1;
-    var a = Math.atan2(dy, dx); if (a < 0) a += 2 * Math.PI;
-    var i = Math.round(a / (2 * Math.PI) * NR) % NR;
-    var r = RAYS[i]; var j = Math.min(r.length - 1, Math.floor(d / DR));
-    return r[j];
-  }
-  var HZ_SHARE = (function () {
-    var s = [0, 0, 0], t = 0;
-    RAYS.forEach(function (r) { r.forEach(function (c, j) { var w = j + 0.5; s[c] += w; t += w; }); });
-    return s.map(function (v) { return Math.round(v / t * 100); });
-  })();
 
-  /* ---------- geometry helpers ---------- */
-  function crClosed(p, step) {
-    var out = [], n = p.length, k = step || 0.05;
-    for (var i = 0; i < n; i++) {
-      var p0 = p[(i - 1 + n) % n], p1 = p[i], p2 = p[(i + 1) % n], p3 = p[(i + 2) % n];
-      for (var t = 0; t < 1 - 1e-9; t += k) {
-        var t2 = t * t, t3 = t2 * t, q = [0, 0];
-        for (var c = 0; c < 2; c++) {
-          q[c] = 0.5 * (2 * p1[c] + (-p0[c] + p2[c]) * t + (2 * p0[c] - 5 * p1[c] + 4 * p2[c] - p3[c]) * t2 + (-p0[c] + 3 * p1[c] - 3 * p2[c] + p3[c]) * t3);
-        }
-        out.push(q);
-      }
-    }
-    return out;
-  }
-  function smoothClosedPath(p) {
-    var n = p.length, d = 'M' + f1(p[0][0]) + ' ' + f1(p[0][1]);
-    for (var i = 0; i < n; i++) {
-      var p0 = p[(i - 1 + n) % n], p1 = p[i], p2 = p[(i + 1) % n], p3 = p[(i + 2) % n];
-      d += 'C' + f1(p1[0] + (p2[0] - p0[0]) / 6) + ' ' + f1(p1[1] + (p2[1] - p0[1]) / 6) + ' ' +
-        f1(p2[0] - (p3[0] - p1[0]) / 6) + ' ' + f1(p2[1] - (p3[1] - p1[1]) / 6) + ' ' + f1(p2[0]) + ' ' + f1(p2[1]);
-    }
-    return d + 'Z';
-  }
-  function blob(cx, cy, rx, ry, seed) {
-    var r = rng(seed), n = 16, pts = [];
-    for (var i = 0; i < n; i++) {
-      var a = i / n * 2 * Math.PI, k = 0.8 + 0.32 * r();
-      pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]);
-    }
-    return smoothClosedPath(pts);
-  }
+  var steps = document.getElementById('steps'), img = document.getElementById('shotImg'), shot = document.getElementById('shot');
+  var capTitle = document.getElementById('capTitle'), capText = document.getElementById('capText'), notes = document.getElementById('notes');
+  var sw = document.getElementById('switch');
+  var cur = 0, alt2 = false, tip = null;
+  document.getElementById('stepCount').textContent = STEPS.length;
 
-  /* ---------- map drawing ---------- */
-  var svg = $('mapSvg');
-  var defs = el('defs', null, svg);
-  var pat = el('pattern', { id: 'trees', width: 16, height: 16, patternUnits: 'userSpaceOnUse' }, defs);
-  el('circle', { cx: 4, cy: 4, r: 1.7, 'class': 'm-tree' }, pat);
-  el('circle', { cx: 12, cy: 11, r: 1.4, 'class': 'm-tree' }, pat);
-  var cp = el('clipPath', { id: 'hzClip' }, defs);
-  el('circle', { cx: HQ.x, cy: HQ.y, r: RAD }, cp);
-
-  el('rect', { x: 0, y: 0, width: W, height: H, 'class': 'm-land' }, svg);
-
-  // forests
-  var gF = el('g', null, svg);
-  var FORESTS = [[650, 215, 250, 165, 11], [235, 225, 150, 140, 23], [580, 565, 215, 105, 37], [105, 560, 110, 90, 41], [885, 480, 135, 125, 53], [930, 90, 90, 80, 67]];
-  FORESTS.forEach(function (f) {
-    var d = blob(f[0], f[1], f[2], f[3], f[4]);
-    el('path', { d: d, 'class': 'm-forest' }, gF);
-    el('path', { d: d, fill: 'url(#trees)' }, gF);
+  var lastGrp = '';
+  STEPS.forEach(function (s, i) {
+    if (s.grp !== lastGrp) { var g = document.createElement('li'); g.className = 'grp'; g.textContent = s.grp; g.setAttribute('role', 'presentation'); steps.appendChild(g); lastGrp = s.grp; }
+    var li = document.createElement('li'); li.setAttribute('role', 'presentation');
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'step'; b.setAttribute('role', 'tab'); b.id = 'st-' + s.id;
+    b.setAttribute('aria-controls', 'shot');
+    b.innerHTML = '<span class="dot" style="background:' + s.color + '"></span><b></b><span class="age"></span><small></small>';
+    b.querySelector('b').textContent = s.title; b.querySelector('.age').textContent = s.age; b.querySelector('small').textContent = s.short;
+    b.addEventListener('click', function () { show(i, true); });
+    b.addEventListener('keydown', function (e) {
+      var k = e.key, n = null;
+      if (k === 'ArrowDown' || k === 'ArrowRight') n = (cur + 1) % STEPS.length;
+      if (k === 'ArrowUp' || k === 'ArrowLeft') n = (cur - 1 + STEPS.length) % STEPS.length;
+      if (n !== null) { e.preventDefault(); show(n, true); document.getElementById('st-' + STEPS[n].id).focus(); }
+    });
+    li.appendChild(b); steps.appendChild(li);
   });
 
-  // contours (marching squares)
-  (function () {
-    var st = 8, nx = Math.ceil(W / st) + 1, ny = Math.ceil(H / st) + 1, z = new Float32Array(nx * ny);
-    for (var j = 0; j < ny; j++) for (var i = 0; i < nx; i++) z[j * nx + i] = hgt(i * st, j * st);
-    var SEG = { 1: [[3, 2]], 2: [[2, 1]], 3: [[3, 1]], 4: [[0, 1]], 5: [[3, 0], [2, 1]], 6: [[0, 2]], 7: [[3, 0]], 8: [[3, 0]], 9: [[0, 2]], 10: [[0, 1], [3, 2]], 11: [[0, 1]], 12: [[3, 1]], 13: [[2, 1]], 14: [[3, 2]] };
-    var gC = el('g', null, svg);
-    for (var L = 150; L <= 285; L += 15) {
-      var d = '';
-      for (var jj = 0; jj < ny - 1; jj++) {
-        for (var ii = 0; ii < nx - 1; ii++) {
-          var a = z[jj * nx + ii], b = z[jj * nx + ii + 1], c = z[(jj + 1) * nx + ii + 1], e = z[(jj + 1) * nx + ii];
-          var idx = (a > L ? 8 : 0) | (b > L ? 4 : 0) | (c > L ? 2 : 0) | (e > L ? 1 : 0);
-          if (idx === 0 || idx === 15) continue;
-          var P = [
-            [ii + (L - a) / (b - a), jj],
-            [ii + 1, jj + (L - b) / (c - b)],
-            [ii + (L - e) / (c - e), jj + 1],
-            [ii, jj + (L - a) / (e - a)]
-          ];
-          SEG[idx].forEach(function (s) {
-            d += 'M' + f1(P[s[0]][0] * st) + ' ' + f1(P[s[0]][1] * st) + 'L' + f1(P[s[1]][0] * st) + ' ' + f1(P[s[1]][1] * st);
-          });
-        }
-      }
-      if (d) el('path', { d: d, 'class': 'm-cont' + ((L - 150) % 60 === 0 ? ' idx' : '') }, gC);
+  function hideTip() { if (tip) { tip.remove(); tip = null; } shot.querySelectorAll('.hs[aria-expanded="true"]').forEach(function (h) { h.setAttribute('aria-expanded', 'false'); }); }
+  function showTip(h, sp) {
+    hideTip();
+    tip = document.createElement('div'); tip.className = 'tip'; tip.setAttribute('role', 'tooltip');
+    var b = document.createElement('b'); b.textContent = sp.t; tip.appendChild(b); tip.appendChild(document.createTextNode(sp.d));
+    shot.appendChild(tip);
+    var W = shot.clientWidth, H = shot.clientHeight, x = sp.x / 100 * W, y = sp.y / 100 * H;
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    var left = Math.min(Math.max(8, x - tw / 2), W - tw - 8);
+    var top = y + 22 + th < H ? y + 22 : Math.max(8, y - 22 - th);
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+    h.setAttribute('aria-expanded', 'true');
+  }
+
+  function render() {
+    var s = STEPS[cur];
+    var useAlt = alt2 && s.img2;
+    img.src = useAlt ? s.img2 : s.img;
+    img.alt = useAlt ? s.alt2 : s.alt;
+    hideTip();
+    shot.querySelectorAll('.hs').forEach(function (h) { h.remove(); });
+    notes.textContent = '';
+    if (!useAlt) {
+      s.spots.forEach(function (sp, k) {
+        var h = document.createElement('button');
+        h.type = 'button'; h.className = 'hs'; h.textContent = k + 1;
+        h.style.left = sp.x + '%'; h.style.top = sp.y + '%';
+        h.setAttribute('aria-label', (k + 1) + '. ' + sp.t); h.setAttribute('aria-expanded', 'false');
+        h.addEventListener('mouseenter', function () { showTip(h, sp); });
+        h.addEventListener('focus', function () { showTip(h, sp); });
+        h.addEventListener('click', function (e) { e.stopPropagation(); if (h.getAttribute('aria-expanded') === 'true') hideTip(); else showTip(h, sp); });
+        h.addEventListener('mouseleave', hideTip); h.addEventListener('blur', hideTip);
+        shot.appendChild(h);
+        var li = document.createElement('li');
+        var n = document.createElement('span'); n.textContent = k + 1; li.appendChild(n);
+        var d = document.createElement('div'); var b = document.createElement('b'); b.textContent = sp.t + '. '; d.appendChild(b); d.appendChild(document.createTextNode(sp.d)); li.appendChild(d);
+        notes.appendChild(li);
+      });
     }
-  })();
-
-  // water
-  var river = 'M-10 300 C 40 330, 80 380, 110 440 S 200 520, 250 560 S 300 640, 310 660';
-  el('path', { d: river, 'class': 'm-water-edge', 'stroke-width': 10 }, svg);
-  el('path', { d: river, 'class': 'm-water', 'stroke-width': 7 }, svg);
-  el('ellipse', { cx: 770, cy: 580, rx: 46, ry: 24, 'class': 'm-lake' }, svg);
-
-  // roads
-  var mainRoad = 'M-10 470 C 120 462, 250 432, 380 422 S 600 428, 700 410 S 900 330, 1010 318';
-  el('path', { d: mainRoad, 'class': 'm-road-c' }, svg);
-  el('path', { d: mainRoad, 'class': 'm-road' }, svg);
-  el('path', { d: 'M398 422 C 395 365, 382 305, 362 252 S 330 120, 352 -10', 'class': 'm-dirt' }, svg);
-  el('path', { d: 'M700 410 C 712 470, 736 520, 752 558', 'class': 'm-dirt' }, svg);
-
-  // houses (a small village, fictional)
-  (function () {
-    var r = rng(7), g = el('g', null, svg);
-    for (var i = 0; i < 16; i++) {
-      var x = 120 + i * 9.5 + r() * 4, side = i % 2 ? 1 : -1;
-      var yRoad = 466 - (x + 10) * 0.105;
-      var y = yRoad + side * (14 + r() * 8) - 5;
-      el('rect', { x: f1(x), y: f1(y), width: 7, height: 6, rx: 1, 'class': 'm-house' }, g);
+    sw.textContent = '';
+    sw.hidden = !s.img2;
+    if (s.img2) {
+      [['Карта', false], ['Окно расчёта', true]].forEach(function (o) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'seg'; b.textContent = o[0];
+        b.setAttribute('aria-pressed', String(alt2 === o[1]));
+        b.addEventListener('click', function () { alt2 = o[1]; render(); });
+        sw.appendChild(b);
+      });
     }
-  })();
-
-  // peaks
-  var gPk = el('g', null, svg);
-  PEAKS.forEach(function (pi) {
-    var o = HILLS[pi], z = Math.round(hgt(o.x, o.y));
-    el('path', { d: 'M' + o.x + ' ' + (o.y - 5) + 'l5 8h-10z', 'class': 'm-peak' }, gPk);
-    var t = el('text', { x: o.x + 8, y: o.y + 3, 'class': 'm-text' }, gPk);
-    t.textContent = String(z);
-  });
-
-  // layers
-  var gGrid = el('g', { 'class': 'm-grid', 'data-l': 'grid' }, svg);
-  var gHz = el('g', { 'data-l': 'horizon' }, svg);
-  var gBsS = el('g', { 'data-l': 'bs' }, svg);
-  var gTrk = el('g', { 'data-l': 'tracks' }, svg);
-  var gBs = el('g', { 'data-l': 'bs' }, svg);
-  var gHq = el('g', null, svg);
-  var gRad = el('g', null, svg);
-  var gLbl = el('g', null, svg);
-
-  // grid of squares (search area)
-  (function () {
-    var x0 = 460, y0 = 60, n = 8, m = 7, s = 40, L = 'АБВГДЕЖЗ';
-    for (var i = 0; i <= n; i++) el('line', { x1: x0 + i * s, y1: y0, x2: x0 + i * s, y2: y0 + m * s }, gGrid);
-    for (var j = 0; j <= m; j++) el('line', { x1: x0, y1: y0 + j * s, x2: x0 + n * s, y2: y0 + j * s }, gGrid);
-    el('rect', { x: x0, y: y0, width: n * s, height: m * s }, gGrid);
-    for (i = 0; i < n; i++) { var t = el('text', { x: x0 + i * s + s / 2, y: y0 - 6, 'text-anchor': 'middle' }, gGrid); t.textContent = L[i]; }
-    for (j = 0; j < m; j++) { var u = el('text', { x: x0 - 6, y: y0 + j * s + s / 2 + 4, 'text-anchor': 'end' }, gGrid); u.textContent = String(j + 1); }
-  })();
-
-  // radio horizon fan
-  (function () {
-    var g = el('g', { 'class': 'hz', 'clip-path': 'url(#hzClip)' }, gHz);
-    var ds = ['', '', ''], da = 2 * Math.PI / NR;
-    RAYS.forEach(function (r, i) {
-      var a0 = (i - 0.5) * da - 0.002, a1 = (i + 0.5) * da + 0.002;
-      var c0 = Math.cos(a0), s0 = Math.sin(a0), c1 = Math.cos(a1), s1 = Math.sin(a1);
-      var j = 0;
-      while (j < r.length) {
-        var c = r[j], k = j;
-        while (k < r.length && r[k] === c) k++;
-        var d0 = j === 0 ? 0 : j * DR, d1 = Math.min(RAD + 2, k * DR);
-        ds[c] += 'M' + f1(HQ.x + c0 * d0) + ' ' + f1(HQ.y + s0 * d0) + 'L' + f1(HQ.x + c1 * d0) + ' ' + f1(HQ.y + s1 * d0) +
-          'L' + f1(HQ.x + c1 * d1) + ' ' + f1(HQ.y + s1 * d1) + 'L' + f1(HQ.x + c0 * d1) + ' ' + f1(HQ.y + s0 * d1) + 'Z';
-        j = k;
-      }
-    });
-    for (var c = 0; c < 3; c++) el('path', { d: ds[c], 'class': 'c' + c }, g);
-    el('circle', { cx: HQ.x, cy: HQ.y, r: RAD, 'class': 'hz-ring' }, gHz);
-    var t = el('text', { x: HQ.x, y: HQ.y - RAD + 16, 'text-anchor': 'middle', 'class': 'm-text' }, gHz);
-    t.textContent = 'радиус ' + Math.round(RAD * MPU / 1000) + ' км';
-  })();
-
-  // base stations (fictional)
-  var BS = [
-    { x: 120, y: 150, az: 20, op: 'Оператор А' },
-    { x: 905, y: 300, az: 200, op: 'Оператор Б' },
-    { x: 320, y: 600, az: 300, op: 'Оператор А' },
-    { x: 700, y: 60, az: 110, op: 'Оператор В' }
-  ];
-  BS.forEach(function (b) {
-    for (var s = 0; s < 3; s++) {
-      var a = (b.az + s * 120 - 90) * Math.PI / 180, w = 30 * Math.PI / 180, R = 70;
-      var d = 'M' + b.x + ' ' + b.y + 'L' + f1(b.x + R * Math.cos(a - w)) + ' ' + f1(b.y + R * Math.sin(a - w)) +
-        'A' + R + ' ' + R + ' 0 0 1 ' + f1(b.x + R * Math.cos(a + w)) + ' ' + f1(b.y + R * Math.sin(a + w)) + 'Z';
-      el('path', { d: d, 'class': 'bs-sec' }, gBsS);
-    }
-  });
-
-  /* ---------- markers ---------- */
-  var markers = []; // {g, x, y, kind}
-  function makeMarker(parent, kind, label) {
-    var g = el('g', { 'class': 'mk ' + kind, tabindex: '0', role: 'button', 'aria-label': label }, parent);
-    return g;
-  }
-  // HQ
-  var hqM = makeMarker(gHq, 'hq', 'Штаб. Открыть карточку');
-  el('circle', { r: 20, 'class': 'hit' }, hqM);
-  el('circle', { r: 17, 'class': 'ring' }, hqM);
-  el('rect', { x: -12, y: -12, width: 24, height: 24, rx: 6, 'class': 'body' }, hqM);
-  el('path', { d: 'M-6.5 0.5L0 -5.5L6.5 0.5M-4.5 -1V6H4.5V-1', 'class': 'glyph' }, hqM);
-  var hqT = el('text', { x: 0, y: 28, 'text-anchor': 'middle', 'class': 'm-text' }, hqM);
-  hqT.textContent = 'Штаб';
-  markers.push({ g: hqM, x: HQ.x, y: HQ.y });
-
-  BS.forEach(function (b, i) {
-    var m = makeMarker(gBs, 'bsm', 'Вышка сотовой связи (пример). Открыть карточку');
-    el('circle', { r: 16, 'class': 'hit' }, m);
-    el('circle', { r: 14, 'class': 'ring' }, m);
-    el('circle', { r: 10, 'class': 'body' }, m);
-    el('path', { d: 'M0 -3L-3.5 6M0 -3L3.5 6M-2.2 2.5H2.2M-4.5 -6a5 5 0 0 0 0 5M4.5 -6a5 5 0 0 1 0 5', 'class': 'glyph' }, m);
-    markers.push({ g: m, x: b.x, y: b.y });
-    m.addEventListener('click', function () { select({ type: 'bs', i: i }); });
-    keyClick(m);
-  });
-
-  function keyClick(node) {
-    node.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); node.dispatchEvent(new MouseEvent('click', { bubbles: true })); }
-    });
-  }
-  hqM.addEventListener('click', function () { select({ type: 'hq' }); });
-  keyClick(hqM);
-
-  // scale bar and north
-  (function () {
-    var g = el('g', null, gLbl), x = 24, y = H - 22, L = 80; // 2 km
-    el('path', { d: 'M' + x + ' ' + (y - 5) + 'V' + y + 'H' + (x + L) + 'V' + (y - 5), style: 'fill:none;stroke:var(--m-label);stroke-width:2' }, g);
-    var t = el('text', { x: x + L + 8, y: y + 1, 'class': 'm-text' }, g); t.textContent = '2 км';
-    var n = el('g', { transform: 'translate(' + (W - 28) + ' 30)' }, gLbl);
-    el('path', { d: 'M0 -14L7 8L0 3L-7 8Z', style: 'fill:var(--m-label)' }, n);
-    var tn = el('text', { x: 0, y: 24, 'text-anchor': 'middle', 'class': 'm-text' }, n); tn.textContent = 'С';
-  })();
-
-  /* ---------- groups simulation (fictional) ---------- */
-  var DEMO_MIN_PER_SEC = 0.6667;     // 1 demo minute = 1.5 s
-  var T_HIST = 9 * 60;               // history starts 09:00
-  var NOW0 = 11 * 60 + 5;            // demo starts 11:05
-  var SUNSET = 16 * 60 + 38, DUSK = 17 * 60 + 21;
-  var TRAIL_MIN = 90;                // "треки за 1,5 ч"
-  var SILENT_ALARM = 20;
-  var GROUPS = [
-    { n: 1, name: 'Группа 1', id: '0000101', col: '--r1', start: 8 * 60 + 50, bat: 91, drain: 0.045, speed: 1.9, every: 2.0,
-      pts: [[620, 380], [690, 350], [750, 385], [740, 440], [680, 455], [630, 430]], phase: 0.15 },
-    { n: 2, name: 'Группа 2', id: '0000102', col: '--r2', start: 9 * 60 + 5, bat: 84, drain: 0.05, speed: 1.7, every: 2.4,
-      pts: [[300, 330], [250, 300], [200, 330], [190, 400], [260, 420], [320, 390]], phase: 0.55 },
-    { n: 3, name: 'Группа 3', id: '0000103', col: '--r3', start: 8 * 60 + 40, bat: 77, drain: 0.06, speed: 2.0, every: 2.0,
-      pts: [[380, 195], [415, 130], [475, 100], [545, 120], [525, 190], [455, 225]], silentAtStart: 9 },
-    { n: 4, name: 'Группа 4', id: '0000104', col: '--r4', start: 9 * 60 + 20, bat: 88, drain: 0.05, speed: 1.8, every: 2.2,
-      pts: [[430, 470], [510, 450], [560, 490], [540, 570], [470, 590], [420, 540]], afterShadow: 6 }
-  ];
-  var rand = rng(2026);
-  GROUPS.forEach(function (g) {
-    var s = crClosed(g.pts, 0.02), cum = [0];
-    for (var i = 1; i <= s.length; i++) {
-      var a = s[i - 1], b = s[i % s.length];
-      cum.push(cum[i - 1] + Math.sqrt((b[0] - a[0]) * (b[0] - a[0]) + (b[1] - a[1]) * (b[1] - a[1])));
-    }
-    g.path = s; g.cum = cum; g.L = cum[s.length];
-    // positions of shadow entry / exit along the loop
-    var cls = s.map(function (p) { return clsAt(p[0], p[1]); });
-    var entry = -1, exit = -1;
-    for (i = 0; i < s.length; i++) {
-      var prev = cls[(i - 1 + s.length) % s.length];
-      if (cls[i] === 2 && prev !== 2 && entry < 0) entry = i;
-      if (cls[i] !== 2 && prev === 2 && exit < 0) exit = i;
-    }
-    var s0 = g.phase * g.L;
-    if (g.silentAtStart && entry >= 0) s0 = cum[entry] + g.speed * g.silentAtStart;
-    if (g.afterShadow && exit >= 0) s0 = cum[exit] + g.speed * g.afterShadow;
-    g.sNow0 = s0; // arc position at NOW0
-  });
-  function posAt(g, t) {
-    var s = g.sNow0 + g.speed * (t - NOW0);
-    s = ((s % g.L) + g.L) % g.L;
-    var lo = 0, hi = g.path.length;
-    while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (g.cum[mid] <= s) lo = mid; else hi = mid; }
-    var a = g.path[lo], b = g.path[(lo + 1) % g.path.length], seg = g.cum[lo + 1] - g.cum[lo] || 1, k = (s - g.cum[lo]) / seg;
-    return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k];
   }
 
-  var now = T_HIST;
-  var LOG = [];
-  var DEMO_END = DUSK + 40;          // after dusk the demo day starts over
-  function logEv(t, text, alarm) {
-    LOG.unshift({ t: t, text: text, al: !!alarm });
-    if (LOG.length > 6) LOG.length = 6;
+  function show(i, user) {
+    cur = i; alt2 = false;
+    var s = STEPS[i];
+    steps.querySelectorAll('.step').forEach(function (b, k) { b.setAttribute('aria-selected', String(k === i)); b.tabIndex = k === i ? 0 : -1; });
+    capTitle.textContent = s.title; capText.textContent = s.text;
+    render();
+    if (user) { try { localStorage.setItem('dmrsite.step', s.id); } catch (e) { /* хранилище недоступно */ } }
   }
-  function doFix(g, t, quiet) {
-    var p = posAt(g, t), c = clsAt(p[0], p[1]);
-    var ok = c === 0 || (c === 1 && rand() < 0.55);
-    if (ok) {
-      var gap = g.lastFix == null ? 0 : t - g.lastFix.t;
-      g.fixes.push({ t: t, x: p[0], y: p[1] });
-      g.lastFix = { t: t, x: p[0], y: p[1] };
-      if (!quiet) {
-        if (gap >= 10) logEv(t, g.name + ' — снова на связи');
-        else if (rand() < 0.3) { g.talkUntil = t + 1.4; logEv(t, g.name + ' — вышла на связь'); }
-        else logEv(t, g.name + ' — координаты');
-      }
-      g.alarmLogged = false;
-    }
-    g.nextFix = t + g.every * (0.75 + 0.5 * rand());
-  }
-  function advance(dm) {
-    var target = now + dm;
-    GROUPS.forEach(function (g) {
-      while (g.nextFix <= target) doFix(g, g.nextFix, g.nextFix < NOW0);
-      var cut = target - TRAIL_MIN - 5;
-      while (g.fixes.length > 2 && g.fixes[0].t < cut) g.fixes.shift();
-      if (g.lastFix && target - g.lastFix.t >= SILENT_ALARM && !g.alarmLogged) {
-        g.alarmLogged = true;
-        logEv(g.lastFix.t + SILENT_ALARM, g.name + ' молчит 20 мин — тревога', true);
-      }
-    });
-    now = target;
-  }
-  function resetSim() {
-    GROUPS.forEach(function (g) {
-      g.fixes = []; g.lastFix = null; g.nextFix = T_HIST + rand() * g.every;
-      g.talkUntil = -1; g.alarmLogged = false; g.ack = null; g.disp = null;
-    });
-    now = T_HIST; LOG = [];
-    advance(NOW0 - T_HIST);
-    // seed the log with a few quiet entries from the last minutes
-    var recent = [];
-    GROUPS.forEach(function (g) { g.fixes.forEach(function (f) { if (f.t > NOW0 - 6) recent.push({ t: f.t, text: g.name + ' — координаты' }); }); });
-    recent.sort(function (a, b) { return b.t - a.t; });
-    LOG = recent.slice(0, 5).map(function (r) { return { t: r.t, text: r.text, al: false }; });
-  }
-  resetSim();
+  document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.hs')) hideTip(); });
+  var start = 0;
+  try { var saved = localStorage.getItem('dmrsite.step'); STEPS.forEach(function (s, k) { if (s.id === saved) start = k; }); } catch (e) { /* хранилище недоступно */ }
+  show(start, false);
 
-  function hhmm(t) {
-    var m = Math.floor(t) % 1440, hh = Math.floor(m / 60), mm = m % 60;
-    return (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
-  }
-  function dur(min) {
-    min = Math.max(0, Math.round(min));
-    var hh = Math.floor(min / 60), mm = min % 60;
-    if (hh === 0) return mm + ' мин';
-    return hh + ' ч ' + mm + ' мин';
-  }
-  function state(g) {
-    if (!g.lastFix) return 'old';
-    var age = now - g.lastFix.t;
-    if (age >= SILENT_ALARM) return 'alarm';
-    if (age >= 15) return 'old';
-    if (age >= 3) return 'stale';
-    return 'fresh';
-  }
-
-  // radio markers + tracks
-  GROUPS.forEach(function (g, i) {
-    g.trk = el('polyline', { 'class': 'trk', style: 'stroke:var(' + g.col + ')' }, gTrk);
-    var m = makeMarker(gRad, 'radio', g.name + ' (пример). Открыть карточку');
-    el('circle', { r: 20, 'class': 'hit' }, m);
-    el('circle', { r: 13, 'class': 'halo', style: 'stroke:var(' + g.col + ')' }, m);
-    el('circle', { r: 16, 'class': 'alrm' }, m);
-    el('circle', { r: 14, 'class': 'ring' }, m);
-    el('circle', { r: 9.5, 'class': 'body', style: 'fill:var(' + g.col + ')' }, m);
-    var t = el('text', { 'class': 'num', y: 0.5 }, m); t.textContent = String(g.n);
-    g.mk = m;
-    var mo = { g: m, x: 0, y: 0, grp: g };
-    markers.push(mo); g.mo = mo;
-    m.addEventListener('click', function () { select({ type: 'radio', i: i }); });
-    keyClick(m);
-  });
-
-  /* ---------- scale handling ---------- */
-  var K = 1;
-  function placeMarkers() {
-    markers.forEach(function (m) {
-      m.g.setAttribute('transform', 'translate(' + f1(m.x) + ' ' + f1(m.y) + ') scale(' + K.toFixed(3) + ')');
-    });
-  }
-  function rescale() {
-    var w = svg.getBoundingClientRect().width || 1000;
-    var k = Math.min(2.3, Math.max(1, 1000 / w * 0.8));
-    K = k;
-    svg.style.setProperty('--k', (1000 / w).toFixed(3));
-    placeMarkers();
-  }
-  if (window.ResizeObserver) new ResizeObserver(rescale).observe(svg);
-  else window.addEventListener('resize', rescale);
-
-  /* ---------- layers ---------- */
-  var layerState = { tracks: true, horizon: true, bs: false, grid: false };
-  function applyLayers() {
-    Array.prototype.forEach.call(svg.querySelectorAll('[data-l]'), function (n) {
-      n.style.display = layerState[n.getAttribute('data-l')] ? '' : 'none';
-    });
-    $('hzLegend').style.display = layerState.horizon ? '' : 'none';
-  }
-  Array.prototype.forEach.call(document.querySelectorAll('.tog[data-layer]'), function (b) {
-    b.addEventListener('click', function () {
-      var k = b.getAttribute('data-layer');
-      layerState[k] = !layerState[k];
-      b.setAttribute('aria-pressed', layerState[k] ? 'true' : 'false');
-      applyLayers();
-      if (k === 'bs' && layerState.bs && sel.type !== 'bs') select({ type: 'bs', i: 0 });
-      else if (k === 'bs' && !layerState.bs && sel.type === 'bs') select({ type: 'radio', i: 2 });
-    });
-  });
-  applyLayers();
-
-  /* ---------- selection + card ---------- */
-  var sel = { type: 'radio', i: 2 };
-  function select(s) { sel = s; renderCard(); renderList(); markSel(); }
-  function markSel() {
-    markers.forEach(function (m) { m.g.classList.remove('sel'); });
-    if (sel.type === 'hq') hqM.classList.add('sel');
-    if (sel.type === 'radio') GROUPS[sel.i].mk.classList.add('sel');
-    if (sel.type === 'bs') markers[1 + sel.i].g.classList.add('sel');
-  }
-  var LINK_TXT = ['связь со штабом есть', 'связь на грани', 'тень за холмом — связи нет'];
-  var LINK_COL = ['var(--h-vis)', 'var(--h-edge)', 'var(--h-shadow)'];
-  function row(dl, k, v, txt, lampCol) {
-    var dt = h('dt', null, k), dd = h('dd', txt ? 'txt' : null);
-    if (lampCol) { var l = h('span', 'lamp'); l.style.background = lampCol; dd.appendChild(l); }
-    dd.appendChild(document.createTextNode(v));
-    dl.appendChild(dt); dl.appendChild(dd);
-  }
-  function renderCard() {
-    var c = $('card'); c.textContent = '';
-    var title = h('div', 'ct'), dl = h('dl'), note = h('p', 'note');
-    if (sel.type === 'radio') {
-      var g = GROUPS[sel.i], st = state(g);
-      var dot = h('span', 'lamp'); dot.style.background = 'var(' + g.col + ')'; dot.style.width = '14px'; dot.style.height = '14px';
-      title.appendChild(dot); title.appendChild(document.createTextNode(g.name + ' '));
-      title.appendChild(h('span', 'tag', 'пример'));
-      row(dl, 'Рация', 'DMR, ID ' + g.id);
-      if (g.lastFix) {
-        var age = now - g.lastFix.t;
-        row(dl, 'Последний выход', hhmm(g.lastFix.t) + ' · ' + (age < 1 ? 'только что' : dur(age) + ' назад'), false,
-          st === 'fresh' ? 'var(--ok)' : st === 'stale' ? 'var(--h-edge)' : st === 'old' ? 'var(--off)' : 'var(--bad)');
-        var cl = clsAt(g.lastFix.x, g.lastFix.y);
-        row(dl, 'Связь там', LINK_TXT[cl], true, LINK_COL[cl]);
-      }
-      row(dl, 'Заряд', Math.max(5, Math.round(g.bat - (now - g.start) * g.drain)) + ' %');
-      row(dl, 'В лесу', dur(now - g.start));
-      row(dl, 'Пройдено', comma(g.speed * (now - g.start) * MPU / 1000, 1) + ' км');
-      if (now < g.talkUntil) row(dl, 'Сейчас', 'говорит в эфире', true, 'var(--accent)');
-      note.textContent = st === 'alarm' ? 'Группа давно молчит: похоже, ушла в тень за холмом. В программе в этот момент звучат тревога и сигнал «Проверь связь».' :
-        st === 'old' ? 'Координат давно нет: похоже, группа ушла в тень за холмом. Метка стоит там, откуда пришли последние координаты.' :
-        'Номер, заряд и время вымышлены. Метка стоит там, откуда пришли последние координаты.';
-    } else if (sel.type === 'hq') {
-      title.appendChild(document.createTextNode('Штаб '));
-      title.appendChild(h('span', 'tag', 'пример'));
-      row(dl, 'Мачта', HQ.mast + ' м');
-      row(dl, 'Радиус расчёта', Math.round(RAD * MPU / 1000) + ' км');
-      row(dl, 'Связь есть', HZ_SHARE[0] + ' % круга', false, 'var(--h-vis)');
-      row(dl, 'На грани', HZ_SHARE[1] + ' % круга', false, 'var(--h-edge)');
-      row(dl, 'Тень', HZ_SHARE[2] + ' % круга', false, 'var(--h-shadow)');
-      note.textContent = 'В программе так выглядит сводка радиогоризонта от штаба: по рельефу видно, где группы могут уйти из связи.';
-    } else {
-      var b = BS[sel.i], dx = b.x - HQ.x, dy = b.y - HQ.y;
-      title.appendChild(document.createTextNode('Вышка сотовой связи '));
-      title.appendChild(h('span', 'tag', 'пример'));
-      row(dl, 'Оператор', b.op + ' (условно)', true);
-      row(dl, 'Секторов', '3');
-      row(dl, 'До штаба', comma(Math.sqrt(dx * dx + dy * dy) * MPU / 1000, 1) + ' км');
-      note.textContent = 'В программе вышки берутся из реестра санитарно-эпидемиологических заключений; здесь — вымышленные.';
-    }
-    c.appendChild(title); c.appendChild(dl); c.appendChild(note);
-  }
-
-  /* ---------- list + log ---------- */
-  var listBtns = [];
-  (function () {
-    var ul = $('glist');
-    GROUPS.forEach(function (g, i) {
-      var li = h('li'), b = h('button', 'grow'); b.type = 'button';
-      var s = h('span', 'stripe'), n = h('span', 'gnum', String(g.n)); n.style.background = 'var(' + g.col + ')';
-      var mid = h('span'), nm = h('span', 'gname', g.name), sub = h('span', 'gsub', '');
-      mid.appendChild(nm); mid.appendChild(sub);
-      var age = h('span', 'gage', '');
-      b.appendChild(s); b.appendChild(n); b.appendChild(mid); b.appendChild(age);
-      b.addEventListener('click', function () { select({ type: 'radio', i: i }); });
-      li.appendChild(b); ul.appendChild(li);
-      listBtns.push({ b: b, sub: sub, age: age });
-    });
-  })();
-  function renderList() {
-    GROUPS.forEach(function (g, i) {
-      var r = listBtns[i], st = state(g), a = g.lastFix ? now - g.lastFix.t : 0;
-      r.b.className = 'grow ' + st;
-      r.b.setAttribute('aria-current', sel.type === 'radio' && sel.i === i ? 'true' : 'false');
-      r.age.textContent = a < 1 ? 'сейчас' : Math.floor(a) + ' мин';
-      r.sub.textContent = st === 'alarm' ? 'молчит — проверь связь' : (now < g.talkUntil ? 'говорит в эфире' : st === 'fresh' ? 'на связи' : st === 'stale' ? 'отметка устаревает' : 'давно без координат');
-    });
-  }
-  function renderLog() {
-    var ul = $('log'); ul.textContent = '';
-    LOG.slice(0, 5).forEach(function (e) {
-      var li = h('li'); li.appendChild(h('span', 't', hhmm(e.t)));
-      li.appendChild(h('span', e.al ? 'al' : null, e.text)); ul.appendChild(li);
-    });
-  }
-  function renderStatus() {
-    $('clock').textContent = hhmm(now);
-    var silent = GROUPS.filter(function (g) { return state(g) === 'alarm' && g.ack !== (g.lastFix && g.lastFix.t); });
-    var box = $('alarm');
-    if (silent.length) {
-      var g = silent[0], txt = g.name + ' молчит больше ' + SILENT_ALARM + ' минут';
-      if (box.getAttribute('data-txt') !== txt) {
-        var at = $('alarmTxt'); at.textContent = '';
-        at.appendChild(h('b', null, 'Проверь связь: ')); at.appendChild(document.createTextNode(txt));
-        box.setAttribute('data-txt', txt);
-      }
-      box.classList.add('on');
-    } else { box.classList.remove('on'); box.removeAttribute('data-txt'); }
-  }
-  $('alarmAck').addEventListener('click', function () {
-    GROUPS.forEach(function (g) { if (state(g) === 'alarm') g.ack = g.lastFix.t; });
-    renderStatus();
-  });
-
-  /* ---------- per-frame rendering ---------- */
-  function renderMap(dtReal) {
-    GROUPS.forEach(function (g) {
-      if (!g.lastFix) return;
-      var tx = g.lastFix.x, ty = g.lastFix.y;
-      if (!g.disp || mqReduce.matches || dtReal == null) g.disp = { x: tx, y: ty };
-      else {
-        var k = Math.min(1, dtReal * 3.5);
-        g.disp.x += (tx - g.disp.x) * k; g.disp.y += (ty - g.disp.y) * k;
-      }
-      g.mo.x = g.disp.x; g.mo.y = g.disp.y;
-      var pts = g.fixes.filter(function (f) { return f.t >= now - TRAIL_MIN; }).map(function (f) { return f1(f.x) + ',' + f1(f.y); });
-      if (pts.length) pts[pts.length - 1] = f1(g.disp.x) + ',' + f1(g.disp.y);
-      g.trk.setAttribute('points', pts.join(' '));
-      var st = state(g);
-      g.mk.classList.toggle('old', st === 'old' || st === 'alarm');
-      g.mk.classList.toggle('alarm', st === 'alarm');
-      g.mk.classList.toggle('talk', now < g.talkUntil);
-    });
-    placeMarkers();
-  }
-
-  var running = !mqReduce.matches, visible = true, raf = 0, lastTs = 0, uiAcc = 0;
-  var playBtn = $('playBtn');
-  function paintPlay() {
-    playBtn.setAttribute('aria-pressed', running ? 'true' : 'false');
-    playBtn.querySelector('use').setAttribute('href', running ? '#i-pause' : '#i-play');
-    playBtn.querySelector('span').textContent = running ? 'Пауза' : 'Пуск';
-    playBtn.setAttribute('aria-label', running ? 'Остановить движение на карте' : 'Запустить движение на карте');
-  }
-  function frame(ts) {
-    raf = 0;
-    if (!running || !visible || document.hidden) return;
-    var dt = lastTs ? Math.min(0.25, (ts - lastTs) / 1000) : 0;
-    lastTs = ts;
-    advance(dt * DEMO_MIN_PER_SEC);
-    if (now > DEMO_END) { resetSim(); renderMap(null); uiAcc = 1; }
-    else renderMap(dt);
-    uiAcc += dt;
-    if (uiAcc > 0.4) { uiAcc = 0; renderList(); renderLog(); renderStatus(); renderCard(); }
-    raf = requestAnimationFrame(frame);
-  }
-  function kick() { if (!raf && running && visible && !document.hidden) { lastTs = 0; raf = requestAnimationFrame(frame); } }
-  playBtn.addEventListener('click', function () { running = !running; paintPlay(); kick(); });
-  document.addEventListener('visibilitychange', kick);
-  if (window.IntersectionObserver) {
-    new IntersectionObserver(function (en) { visible = en[0].isIntersecting; kick(); }).observe($('mapBox'));
-  }
-  if (mqReduce.addEventListener) mqReduce.addEventListener('change', function () { if (mqReduce.matches) { running = false; paintPlay(); } });
-
-  renderMap(null); rescale(); renderList(); renderLog(); renderStatus(); renderCard(); markSel(); paintPlay(); kick();
-
-  /* ---------- diagram ---------- */
-  var DN = [
-    { id: 'radios', t: 'Рации у групп', s: 'DMR с GPS', ic: '#i-radio', k: 'В поле',
-      d: 'Обычные рации DMR с приёмником GPS. Группа просто работает в эфире, а координаты уходят сами — вместе с голосом, сообщением или в ответ на запрос штаба.',
-      g: 'Не нужно диктовать координаты голосом и переписывать их на карту.',
-      w: [125, 85], n: [92, 50] },
-    { id: 'dongle', t: 'Приставка к рации', s: '«свисток» в штабе', ic: '#i-dongle', k: 'В штабе',
-      d: 'Небольшая приставка к радиостанции штаба. Слушает эфир и передаёт на ноутбук или телефон, кто вышел на связь и где он. Подключается по Bluetooth или кабелем.',
-      g: 'Видно каждую группу на карте без ретранслятора и диспетчерской.',
-      w: [415, 85], n: [92, 175] },
-    { id: 'laptop', t: 'Ноутбук в штабе', s: 'главная карта', ic: '#i-laptop', k: 'В штабе',
-      d: 'Главная карта штаба: где группы, их треки, журнал выхода на связь, тревоги, участки и сетка квадратов, связь от штаба и вышки. Всё хранится на самом ноутбуке.',
-      g: 'Полная картина поиска в одном окне, даже без интернета.',
-      w: [480, 245], n: [180, 320] },
-    { id: 'phone', t: 'Телефон радиста', s: 'то же, что ноутбук', ic: '#i-phone', k: 'В поле или в штабе',
-      d: 'Тот же экран и те же функции, что на ноутбуке. Телефон сам подключается к «свистку», пишет свой трек и отправляет точки в штаб, когда есть связь. Если ноутбука нет, телефон становится штабом.',
-      g: 'Радист в поле видит ту же карту, что штаб, а штаб можно развернуть с одного телефона.',
-      w: [840, 85], n: [92, 470] },
-    { id: 'others', t: 'Телефоны в штабе', s: 'смотрят ту же карту', ic: '#i-phones', k: 'В штабе',
-      d: 'Другие телефоны и планшеты в штабе открывают ту же карту по Wi-Fi штаба. Оператор и руководитель видят то же, что радист.',
-      g: 'Не нужно толпиться у одного ноутбука.',
-      w: [840, 380], n: [268, 470] },
-    { id: 'maps', t: 'Карты без интернета', s: 'и справочники', ic: '#i-map', k: 'Заранее',
-      d: 'Подробные карты, рельеф и базы вышек сотовой связи загружаются заранее — из интернета или с флешки. Телефоны получают их от ноутбука по Wi-Fi штаба. Перед установкой программа проверяет, что файл настоящий и не испорчен.',
-      g: 'В лесу без связи у штаба есть всё нужное.',
-      w: [480, 410], n: [180, 610] }
-  ];
-  var DE = [
-    { a: 'radios', b: 'dongle', l: 'эфир' },
-    { a: 'dongle', b: 'laptop', l: 'Bluetooth или кабель' },
-    { a: 'dongle', b: 'phone', l: 'Bluetooth', dash: true, wc: null, nc: [8, 330] },
-    { a: 'laptop', b: 'phone', l: 'Wi-Fi штаба', both: true },
-    { a: 'laptop', b: 'others', l: 'Wi-Fi штаба' },
-    { a: 'maps', b: 'laptop', l: 'заранее' }
-  ];
-  var dBox = $('diagram'), dInfo = $('dinfo'), dCur = 'laptop', dLayout = '';
-  var byId = {}; DN.forEach(function (n) { byId[n.id] = n; });
-  function boxSize(mode, id) {
-    if (mode === 'w') return id === 'laptop' ? [246, 80] : [236, 74];
-    return id === 'laptop' ? [176, 70] : [168, 66];
-  }
-  function edgePoint(c, sz, toward) {
-    var dx = toward[0] - c[0], dy = toward[1] - c[1];
-    var sx = sz[0] / 2 + 4, sy = sz[1] / 2 + 4;
-    var t = Math.min(Math.abs(dx) > 1e-6 ? sx / Math.abs(dx) : 1e9, Math.abs(dy) > 1e-6 ? sy / Math.abs(dy) : 1e9);
-    return [c[0] + dx * t, c[1] + dy * t];
-  }
-  function drawDiagram() {
-    var mode = dBox.clientWidth < 720 ? 'n' : 'w';
-    if (mode === dLayout) return;
-    dLayout = mode;
-    dBox.textContent = '';
-    var vb = mode === 'w' ? [960, 470] : [360, 660];
-    var s = el('svg', { viewBox: '0 0 ' + vb[0] + ' ' + vb[1], 'class': 'dg-' + mode, role: 'group', 'aria-label': 'Схема: из чего состоит DMR Trekking' }, null);
-    var df = el('defs', null, s);
-    ['n', 'a'].forEach(function (k) {
-      var mk = el('marker', { id: 'ar-' + k, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, df);
-      el('path', { d: 'M0 0L10 5L0 10z', style: 'fill:' + (k === 'a' ? 'var(--accent)' : 'var(--line-2)') }, mk);
-    });
-    var gE = el('g', null, s), gN = el('g', null, s);
-    DE.forEach(function (e) {
-      var A = byId[e.a], B = byId[e.b], ca = A[mode], cb = B[mode];
-      var g = el('g', { 'class': 'de' + (e.dash ? ' dash' : '') }, gE);
-      var ctl = mode === 'w' ? e.wc : e.nc;
-      var pa = edgePoint(ca, boxSize(mode, A.id), ctl || cb), pb = edgePoint(cb, boxSize(mode, B.id), ctl || ca);
-      var d = 'M' + f1(pa[0]) + ' ' + f1(pa[1]) + (ctl ? 'Q' + ctl[0] + ' ' + ctl[1] + ' ' : 'L') + f1(pb[0]) + ' ' + f1(pb[1]);
-      var p = el('path', { d: d, 'marker-end': 'url(#ar-n)' }, g);
-      if (e.both) p.setAttribute('marker-start', 'url(#ar-n)');
-      if (mode === 'w' && e.l) {
-        var mx = (pa[0] + pb[0]) / 2, my = (pa[1] + pb[1]) / 2;
-        var t = el('text', { x: f1(mx), y: f1(my - 7), 'text-anchor': 'middle' }, g); t.textContent = e.l;
-      }
-      e.node = g; e.path = p;
-    });
-    DN.forEach(function (n) {
-      var c = n[mode], sz = boxSize(mode, n.id);
-      var g = el('g', { 'class': 'dn', tabindex: '0', role: 'button', 'aria-label': n.t + ': ' + n.s }, gN);
-      el('rect', { 'class': 'box', x: f1(c[0] - sz[0] / 2), y: f1(c[1] - sz[1] / 2), width: sz[0], height: sz[1], rx: 12 }, g);
-      if (mode === 'w') {
-        var u = el('use', { href: n.ic, x: f1(c[0] - sz[0] / 2 + 14), y: f1(c[1] - 13), width: 26, height: 26, 'class': 'ic' }, g);
-        u.style.color = 'var(--accent-ink)';
-        var t1 = el('text', { 'class': 't1', x: f1(c[0] - sz[0] / 2 + 52), y: f1(c[1] - 3) }, g); t1.textContent = n.t;
-        var t2 = el('text', { 'class': 't2', x: f1(c[0] - sz[0] / 2 + 52), y: f1(c[1] + 17) }, g); t2.textContent = n.s;
-      } else {
-        var a1 = el('text', { 'class': 't1', x: c[0], y: f1(c[1] - 2), 'text-anchor': 'middle' }, g); a1.textContent = n.t;
-        var a2 = el('text', { 'class': 't2', x: c[0], y: f1(c[1] + 18), 'text-anchor': 'middle' }, g); a2.textContent = n.s;
-      }
-      g.addEventListener('mouseenter', function () { setNode(n.id); });
-      g.addEventListener('focus', function () { setNode(n.id); });
-      g.addEventListener('click', function () { setNode(n.id); });
-      keyClick(g);
-      n.node = g;
-    });
-    dBox.appendChild(s);
-    setNode(dCur);
-  }
-  function setNode(id) {
-    dCur = id;
-    var n = byId[id];
-    DN.forEach(function (m) { if (m.node) m.node.classList.toggle('on', m.id === id); });
-    DE.forEach(function (e) {
-      var on = e.a === id || e.b === id;
-      if (!e.node) return;
-      e.node.classList.toggle('on', on);
-      e.path.setAttribute('marker-end', on ? 'url(#ar-a)' : 'url(#ar-n)');
-      if (e.both) e.path.setAttribute('marker-start', on ? 'url(#ar-a)' : 'url(#ar-n)');
-    });
-    dBox.classList.add('focus');
-    dInfo.textContent = '';
-    dInfo.appendChild(h('p', 'k', n.k));
-    dInfo.appendChild(h('h3', null, n.t));
-    dInfo.appendChild(h('p', null, n.d));
-    var gv = h('p', 'gives'); gv.appendChild(h('b', null, 'Что это даёт штабу')); gv.appendChild(document.createTextNode(n.g));
-    dInfo.appendChild(gv);
-  }
-  drawDiagram();
-  if (window.ResizeObserver) new ResizeObserver(drawDiagram).observe(dBox);
-  else window.addEventListener('resize', drawDiagram);
-
-  /* ---------- tabs ---------- */
-  var tabs = Array.prototype.slice.call(document.querySelectorAll('#tabs [role="tab"]'));
-  function showTab(t, focus) {
+  // вкладки возможностей
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('#tabs .tab'));
+  function selTab(t, focus) {
     tabs.forEach(function (x) {
-      var on = x === t;
-      x.setAttribute('aria-selected', on ? 'true' : 'false');
-      x.tabIndex = on ? 0 : -1;
-      $(x.getAttribute('aria-controls')).hidden = !on;
+      var on = x === t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1;
+      document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
     });
     if (focus) t.focus();
   }
   tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { showTab(t, false); });
+    t.addEventListener('click', function () { selTab(t, false); });
     t.addEventListener('keydown', function (e) {
-      var j = -1;
-      if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
-      else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
-      else if (e.key === 'Home') j = 0;
-      else if (e.key === 'End') j = tabs.length - 1;
-      if (j >= 0) { e.preventDefault(); showTab(tabs[j], true); }
+      var n = null;
+      if (e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+      if (e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+      if (e.key === 'Home') n = 0;
+      if (e.key === 'End') n = tabs.length - 1;
+      if (n !== null) { e.preventDefault(); selTab(tabs[n], true); }
     });
   });
-  showTab(tabs[0], false);
+
+  // оформление: как в программе — тёмное или светлое
+  var root = document.documentElement, tb = document.getElementById('themeBtn'), tn = document.getElementById('themeName');
+  function isDark() {
+    var t = root.getAttribute('data-theme');
+    if (t) return t === 'dark';
+    return !(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
+  }
+  function label() { tn.textContent = isDark() ? 'Тёмное' : 'Светлое'; }
+  try { var th = localStorage.getItem('dmrsite.theme'); if (th === 'dark' || th === 'light') root.setAttribute('data-theme', th); } catch (e) { /* хранилище недоступно */ }
+  label();
+  tb.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next); label();
+    try { localStorage.setItem('dmrsite.theme', next); } catch (e) { /* хранилище недоступно */ }
+  });
+  if (window.matchMedia) { try { window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', label); } catch (e) { /* старый браузер */ } }
 })();
 </script>
 </body>
