@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Офлайн-карты OpenStreetMap для DMR Trekking</title>
+<style>
+:root{--bg:#fff;--fg:#1c2127;--mut:#5b6670;--line:#d5dbe1;--card:#f4f6f8;--a:#0b63c5}
+@media(prefers-color-scheme:dark){:root{--bg:#14181c;--fg:#e4e8ec;--mut:#9aa5af;--line:#2d353d;--card:#1c2228;--a:#6cb2ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif}
+main{max-width:60rem;margin:0 auto;padding:1rem 16px 3rem}
+h1{font-size:1.6rem;margin:1rem 0 .3rem}h2{font-size:1.2rem;margin:2rem 0 .5rem}
+p,li{max-width:46rem}.mut{color:var(--mut)}a{color:var(--a)}
+table{width:100%;border-collapse:collapse;margin:.5rem 0}th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600;font-size:.9rem}code{font:.78rem ui-monospace,Consolas,monospace;word-break:break-all}
+td a{word-break:break-all}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.7rem 1rem}
+@media(max-width:700px){thead{display:none}tr{display:block;border:1px solid var(--line);border-radius:8px;margin:.6rem 0;padding:.3rem .6rem;background:var(--card)}
+td{display:block;border:0;padding:.2rem 0}td::before{content:attr(data-l)": ";color:var(--mut);font-size:.85rem}}
+</style></head><body><main>
+<h1>Офлайн-карты OpenStreetMap для DMR Trekking</h1>
+<p class="mut">Векторные карты по восьми федеральным округам: в каждом файле вся Россия до масштаба z5 и свой округ до z14. Формат — MBTiles (Protomaps Basemap). Данные OpenStreetMap на 05.11.2026.</p>
+<h2>Файлы</h2>
+<table><thead><tr><th>Округ</th><th>Размер</th><th>Данные OSM</th><th>SHA-256</th><th>Файл</th></tr></thead><tbody>
+<tr><td data-l="Округ">Центральный (ЦФО)</td><td data-l="Размер">1,17 ГиБ</td><td data-l="Данные OSM">05.11.2026</td><td data-l="SHA-256"><code>af7e513f109ea8b7a54890d4979e816bc47475a7d86085d2b2ba8638d84ccf4f</code></td><td data-l="Файл"><a href="https://github.com/BergRU/dmr-trekking-maps/releases/download/osm-2026-11-06/osm-cfo-2026-11-06.mbtiles">osm-cfo-2026-11-06.mbtiles</a></td></tr>
+<tr><td data-l="Округ">Северо-Западный (СЗФО)</td><td data-l="Размер">1,59 ГиБ</td><td data-l="Данные OSM">05.11.2026</td><td data-l="SHA-256"><code>8d68793dada33f69e1494badcf6322330c5a673f1cef0b20748108bc597e29ed</code></td><td data-l="Файл"><a href="https://github.com/BergRU/dmr-trekking-maps/releases/download/osm-2026-11-06/osm-szfo-2026-11-06.mbtiles">osm-szfo-2026-11-06.mbtiles</a></td></tr>
+<tr><td data-l="Округ">Южный (ЮФО)</td><td data-l="Размер">457 МиБ</td><td data-l="Данные OSM">05.11.2026</td><td data-l="SHA-256"><code>da25ceddff378d59eddff0819f2cf16c5f410acbc560c4786812128622d34920</code></td><td data-l="Файл"><a href="https://github.com/BergRU/dmr-trekking-maps/releases/download/osm-2026-11-06/osm-yufo-2026-11-06.mbtiles">osm-yufo-2026-11-06.mbtiles</a></td></tr>
+<tr><td data-l="Округ">Северо-Кавказский (СКФО)</td><td data-l="Размер">187 МиБ</td><td data-l="Данные OSM">05.11.2026</td><td data-l="SHA-256"><code>55ab5be53fea8a6790efcb26eeaefd69f5e6238e0ebf5be1e311a6fe43aa700a</code></td><td data-l="Файл"><a href="https://github.com/BergRU/dmr-trekking-maps/releases/download/osm-2026-11-06/osm-skfo-2026-11-06.mbtiles">osm-skfo-2026-11-06.mbtiles</a></td></tr>
+<tr><td data-l="Округ">Приволжский (ПФО)</td><td data-l="Размер">1,28 ГиБ</td><td data-l="Данные OSM">05.11.2026</td><td data-l="SHA-256"><code>7b102c6730cd66744e604f69f076d796c6469753653569b755fa68ee80c31124</code></td><td data-l="Файл"><a href="https://github.com/BergRU/dmr-trekking-maps/releases/download/osm-2026-11-06/osm-pfo-2026-11-06.mbtiles">osm-pfo-2026-11-06.mbtiles</a></td></tr>
+<tr><td data-l="Округ">Уральский (УрФО)</td><td data-l="Размер">861 МиБ</td><td data-l="Данные OSM">05.11.2026</td><td data-l="SHA-256"><code>9343faa1c2efa15954a246732b03e4ab295e1d02ea9f8dfe69d7726c7357fb25</code></td><td data-l="Файл"><a href="https://github.com/BergRU/dmr-trekking-maps/releases/download/osm-2026-11-06/osm-urfo-2026-11-06.mbtiles">osm-urfo-2026-11-06.mbtiles</a></td></tr>
+<tr><td data-l="Округ">Сибирский (СФО)</td><td data-l="Размер">1,42 ГиБ</td><td data-l="Данные OSM">05.11.2026</td><td data-l="SHA-256"><code>cc7453d41e75f202fadc19bffbf8b1ac16070d3065025237de97911304ea2635</code></td><td data-l="Файл"><a href="https://github.com/BergRU/dmr-trekking-maps/releases/download/osm-2026-11-06/osm-sfo-2026-11-06.mbtiles">osm-sfo-2026-11-06.mbtiles</a></td></tr>
+<tr><td data-l="Округ">Дальневосточный (ДФО)</td><td data-l="Размер">1,64 ГиБ</td><td data-l="Данные OSM">05.11.2026</td><td data-l="SHA-256"><code>9d318ed675781cb734cbeb296a1dfa0982eab665dbde8ef13a1edd55c4ee77a1</code></td><td data-l="Файл"><a href="https://github.com/BergRU/dmr-trekking-maps/releases/download/osm-2026-11-06/osm-dfo-2026-11-06.mbtiles">osm-dfo-2026-11-06.mbtiles</a></td></tr>
+</tbody></table>
+<p class="mut">Ставьте только те округа, где работает отряд. Сумму SHA-256 можно сверить после скачивания (в Windows: <code>certutil -hashfile файл SHA256</code>).</p>
+<h2>Как поставить</h2>
+<div class="box"><p><b>Ноутбук.</b> В программе DMR Trekking откройте «📦 Обновления данных»: программа покажет карты, проверит подпись и скачает нужные округа. Либо скачайте файл по ссылке выше и нажмите «Добавить файл».</p>
+<p><b>Телефон.</b> Карты переходят с ноутбука штаба по Wi-Fi штаба. Файл также можно скопировать на телефон и добавить кнопкой «Добавить файл» в приложении.</p></div>
+<h2>Лицензия</h2>
+<p>Данные © участники OpenStreetMap, лицензия <a href="https://opendatacommons.org/licenses/odbl/1-0/">Open Database License 1.0</a>. Подробнее: <a href="https://www.openstreetmap.org/copyright">openstreetmap.org/copyright</a>. При показе карты нужна подпись «© участники OpenStreetMap». Схема тайлов и сборка — <a href="https://protomaps.com">Protomaps</a> (BSD-3-Clause).</p>
+<p class="mut">Исходный код страницы и карт: <a href="https://github.com/BergRU/dmr-trekking-maps">BergRU/dmr-trekking-maps</a>.</p>
+</main></body></html>
