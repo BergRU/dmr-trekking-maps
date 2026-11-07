@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Проверка DMR Trekking 0.7.66</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: одна колонка-бланк, разделы как листы проверки, у каждого пункта — «сделай → должно быть» и две отметки */
+:root {
+  --bg: #f6f4ef; --paper: #ffffff; --fg: #1d2127; --muted: #5d6470; --line: #dedad1;
+  --accent: #d9750b; --accent-ink: #ffffff; --ok: #1f8a4c; --ok-bg: #e5f4ea; --bad: #c4352b; --bad-bg: #fbe7e5;
+  --chip: #efece5;
+  --f-body: "Golos Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15181c; --paper: #1d2126; --fg: #e9e6df; --muted: #9aa1ab; --line: #2f343b;
+  --accent: #f0943a; --accent-ink: #1b1308; --ok: #57c285; --ok-bg: #173323; --bad: #f07a6f; --bad-bg: #3a1d1b; --chip: #262b31;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15181c; --paper: #1d2126; --fg: #e9e6df; --muted: #9aa1ab; --line: #2f343b;
+  --accent: #f0943a; --accent-ink: #1b1308; --ok: #57c285; --ok-bg: #173323; --bad: #f07a6f; --bad-bg: #3a1d1b; --chip: #262b31;
+  color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 16px/1.5 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px }
+.wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 20px }
+header { display: grid; gap: 10px }
+.eyebrow { font: 600 12px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent) }
+h1 { font-size: clamp(26px, 5vw, 34px); line-height: 1.15; margin: 0; text-wrap: balance }
+.lead { margin: 0; color: var(--muted); max-width: 62ch }
+.meta { display: flex; flex-wrap: wrap; gap: 8px }
+.chip { background: var(--chip); border-radius: 999px; padding: 4px 10px; font-size: 13px; color: var(--fg) }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px; border-bottom: 1px solid var(--line) }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg) }
+.progress { flex: 1 1 200px; min-width: 0 }
+.track { height: 8px; background: var(--chip); border-radius: 999px; overflow: hidden; display: flex }
+.track i { display: block; height: 100% } .track .o { background: var(--ok) } .track .b { background: var(--bad) }
+.count { font: 13px var(--f-mono); color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums }
+button { font: 600 14px var(--f-body); border-radius: 8px; padding: 9px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--paper); color: var(--fg) }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+section { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 4px }
+section h2 { font-size: 19px; margin: 0 0 2px; display: flex; gap: 10px; align-items: baseline }
+section h2 .n { font: 600 13px var(--f-mono); color: var(--accent) }
+section > p.who { margin: 0 0 8px; color: var(--muted); font-size: 14px }
+.item { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 12px 0; border-top: 1px solid var(--line); align-items: start }
+.item:first-of-type { border-top: 0 }
+.txt { min-width: 0 }
+.do { font-weight: 500 }
+.exp { color: var(--muted); font-size: 14.5px; margin-top: 2px }
+.exp b { color: var(--fg); font-weight: 500 }
+.tag { font: 600 11px var(--f-mono); letter-spacing: .05em; text-transform: uppercase; border-radius: 4px; padding: 2px 6px; margin-left: 6px; background: var(--chip); color: var(--muted); vertical-align: 2px }
+.tag.new { background: var(--accent); color: var(--accent-ink) }
+.marks { display: flex; gap: 6px }
+.marks button { padding: 6px 10px; min-width: 44px; font-size: 13px }
+.item[data-s="ok"] .m-ok { background: var(--ok-bg); border-color: var(--ok); color: var(--ok) }
+.item[data-s="bad"] .m-bad { background: var(--bad-bg); border-color: var(--bad); color: var(--bad) }
+.note { grid-column: 1 / -1 } .note[hidden] { display: none }
+textarea { width: 100%; min-height: 56px; font: 14px var(--f-body); background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px }
+code, .path { font: 13px var(--f-mono); background: var(--chip); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere }
+.report { display: grid; gap: 10px }
+.report ol { margin: 0; padding-left: 22px; display: grid; gap: 6px }
+.copied { font-size: 13px; color: var(--ok); min-height: 1.2em }
+#outText { width: 100%; min-height: 140px; font: 13px var(--f-mono) }
+@media (max-width: 520px) { .item { grid-template-columns: 1fr } .marks { justify-content: flex-start } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Направление «Связь» · проверка перед выпуском</div>
+    <h1>Проверка DMR Trekking 0.7.66</h1>
+    <p class="lead">Пройди по пунктам на своём ноутбуке и телефоне. У каждого пункта — что сделать и что должно получиться. Отметь «ок» или «не так»; если не так — коротко напиши, что увидел. В конце нажми «Скопировать итог» и отправь его боту или в группу техподдержки.</p>
+    <div class="meta"><span class="chip">Windows 0.7.66</span><span class="chip">Android 0.66</span><span class="chip">тестовая сборка Test-71126</span><span class="chip">≈ 40–60 минут</span></div>
+  </header>
+
+  <div class="bar">
+    <div class="progress"><div class="track" aria-hidden="true"><i class="o" id="pOk"></i><i class="b" id="pBad"></i></div>
+      <div class="count" id="count">проверено 0 из 0</div></div>
+    <button class="primary" id="copyBtn" type="button">Скопировать итог</button>
+    <button id="resetBtn" type="button">Начать заново</button>
+  </div>
+  <p class="copied" id="copied" role="status"></p>
+
+  <div id="sections"></div>
+
+  <section class="report">
+    <h2><span class="n">!</span>Нашёл неполадку — как сообщить</h2>
+    <ol>
+      <li>Напиши боту <code>@dmr_trekking_bot</code> в личку <code>/bug</code> (или в группу техподдержки) — бот спросит по шагам: что случилось, ноутбук или телефон, версия, что нажимал.</li>
+      <li>Приложи скриншот и, если просит бот, файл журнала: ноутбук — <span class="path">Документы\DMR Trekking\data\logs\dmrtrek-ГГГГ-ММ-ДД.log</span>; телефон — меню ☰ → «🩺 Диагностика: журнал системы» → «Скачать .log».</li>
+      <li>Ответ по заявке придёт от бота сам, когда её разберут. Свои заявки — команда <code>/my</code>.</li>
+    </ol>
+    <p class="exp">Итог проверки целиком — кнопкой «Скопировать итог» вверху, одним сообщением в группу техподдержки.</p>
+    <textarea id="outText" readonly aria-label="Итог проверки" hidden></textarea>
+  </section>
+</div>
+
+<script>
+const CHECK = [
+  { t: 'Перед началом', who: 'Ноутбук', items: [
+    ['Сделай копию папки <span class="path">Документы\\DMR Trekking\\data</span> (скопируй рядом как <span class="path">data-копия</span>).', 'Копия есть. Установщик сам копию не делает.'],
+  ]},
+  { t: 'Установка и запуск', who: 'Ноутбук и телефон', items: [
+    ['Поставь 0.7.66 поверх своей версии на ноутбук, 0.66 — на телефон.', 'Ставится без ошибок, <b>поиски, трекеры, объекты и базы на месте</b>.'],
+    ['Запусти программу.', 'Окно «вспомогательный инструмент штаба», внизу — <b>ссылка «группа техподдержки в Telegram»</b>.'],
+    ['Меню ☰ → «О проекте».', 'Версия <b>0.7.66</b> (телефон — 0.66), ссылка на группу техподдержки.'],
+    ['F1 (на телефоне — «?» в меню).', 'Открывается справка «С чего начать», поиск по справке находит «свисток».'],
+  ]},
+  { t: 'Свисток и рации', who: 'Ноутбук и телефон', items: [
+    ['Подключи свисток («📻 Свисток и рации…» → «Проверить свисток»).', '«✔ Свисток ответил», состояние «подключён».'],
+    ['Выйди на связь с рации отряда.', 'Рация появилась на карте и в журнале выхода на связь.'],
+    ['В окошке рации — «Запросить координаты».', 'Пришли координаты, точка на карте обновилась.'],
+  ]},
+  { t: 'Поиск', who: 'Ноутбук, потом телефон', items: [
+    ['Создай тестовый поиск, ПКМ (на телефоне — долгое нажатие) → «🏠 Штаб здесь».', 'Значок 🏠 на карте, рации попадают в поиск.'],
+    ['С телефона — «📤 В штаб» на ноутбук.', 'На ноутбуке появились треки и объекты с телефона, без дублей.'],
+    ['Заверши тестовый поиск → «📦 В архив».', 'Архив собран, поиск в разделе «📦 Архив».'],
+  ]},
+  { t: 'Связь', who: 'Ноутбук и телефон', items: [
+    ['Нарисуй линию от штаба в лес → «📡 Связь по линии».', 'Светофор, профиль и причина простыми словами.'],
+    ['Кнопка <b>⌖</b> внизу справа (на ноутбуке — клавиша C), подвигай карту.', 'Плашка: светофор связи до штаба, сколько км и азимут. Кнопку ничто не закрывает.', true],
+    ['ПКМ / долгое нажатие на карте → <b>«📍 Где поймать связь»</b> → «Искать».', 'Три места рядом и фраза для группы вида «Иди на 230° (магн.), 350 м…». Кнопки окна видны, на телефоне — тоже.', true],
+    ['В «Кто на концах» выбери <b>«🚁 Дрон»</b> и посчитай связь.', 'Считает с дрона на высоте 120 м, зона больше, чем у человека.', true],
+    ['Нарисуй круг вокруг штаба → <b>«📡 Общая зона связи»</b> → «Рассчитать» (сначала только штаб, потом добавь точку).', 'Итог появляется и с одним штабом; красным — мёртвые зоны и их доля в %.', true],
+    ['Меню ☰ → <b>«🔗 Кто кого слышит»</b>.', 'Таблица групп; ниже — кто на прямой связи, кто через соседа, кто вне связи.', true],
+  ]},
+  { t: 'Где искать человека', who: 'Ноутбук и телефон', items: [
+    ['ПКМ в одной точке → <b>«🧭 Азимут отсюда»</b>, впиши азимут; потом из второй точки — второй азимут.', 'Два луча и место пересечения с зоной; итог словами «зона примерно … × … м».', true],
+    ['Поставь третий азимут в обратную сторону (на 180°).', 'Предупреждение «место позади группы — проверь азимут».', true],
+    ['Удали тестовые азимуты.', 'Лучи и засечка пропали.'],
+  ]},
+  { t: 'Карта и данные', who: 'Ноутбук и телефон', items: [
+    ['Открой окошко любой метки.', 'Под градусами — строка <b>MGRS</b>, нажатие копирует.', true],
+    ['Вставь MGRS в поле «Координаты» вверху.', 'Карта переходит в эту точку, «понято как MGRS».', true],
+    ['«Слои» → «Рельеф и тропы» → <b>«Крутизна склонов»</b>, приблизь к холмам.', 'Склоны раскрашены жёлтым / оранжевым / красным.', true],
+    ['«📦 Обновления данных» → поставь базу БС своего региона; «Слои» → «Базовые станции».', 'Слой включился сам, станции видны с 8-го масштаба; окно «Базовые станции» пишет, сколько их и откуда.', true],
+  ]},
+  { t: 'Телефон отдельно', who: 'Телефон', items: [
+    ['Открой по очереди длинные окна («Где поймать связь», «Общая зона связи», «Слои»).', 'Окно не уходит за экран, кнопки внизу видны и нажимаются.'],
+    ['«Назад» на телефоне при открытой панели.', 'Панель сворачивается, приложение не закрывается.'],
+    ['Погаси экран на 10 минут во время поиска.', 'Трек за это время записан, рации на месте.'],
+  ]},
+];
+const KEY = 'dmrtrek-check-0766';
+let st = {};
+try { st = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch { st = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch { /* без хранилища — в памяти */ } };
+const strip = h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent; };
+
+const box = document.getElementById('sections');
+let total = 0;
+CHECK.forEach((sec, si) => {
+  const s = document.createElement('section');
+  s.innerHTML = `<h2><span class="n">${String(si).padStart(2, '0')}</span>${sec.t}</h2><p class="who">${sec.who}</p>`;
+  sec.items.forEach(([d, e, isNew], ii) => {
+    const id = `${si}-${ii}`; total++;
+    const it = document.createElement('div');
+    it.className = 'item'; it.dataset.id = id;
+    it.innerHTML = `<div class="txt"><div class="do">${d}${isNew ? '<span class="tag new">новое</span>' : ''}</div><div class="exp">→ ${e}</div></div>
+      <div class="marks"><button type="button" class="m-ok" aria-pressed="false">ок</button><button type="button" class="m-bad" aria-pressed="false">не так</button></div>
+      <div class="note" hidden><textarea id="n-${id}" placeholder="Что увидел? Ноутбук или телефон?"></textarea></div>`;
+    s.appendChild(it);
+  });
+  box.appendChild(s);
+});
+
+function paint() {
+  let ok = 0, bad = 0;
+  document.querySelectorAll('.item').forEach(it => {
+    const v = st[it.dataset.id] || {}; it.dataset.s = v.s || '';
+    it.querySelector('.m-ok').setAttribute('aria-pressed', v.s === 'ok');
+    it.querySelector('.m-bad').setAttribute('aria-pressed', v.s === 'bad');
+    const note = it.querySelector('.note'); note.hidden = v.s !== 'bad';
+    const ta = note.querySelector('textarea'); if (ta.value !== (v.n || '')) ta.value = v.n || '';
+    if (v.s === 'ok') ok++; if (v.s === 'bad') bad++;
+  });
+  document.getElementById('pOk').style.width = (ok / total * 100) + '%';
+  document.getElementById('pBad').style.width = (bad / total * 100) + '%';
+  document.getElementById('count').textContent = `проверено ${ok + bad} из ${total} · ок ${ok} · не так ${bad}`;
+}
+box.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const id = b.closest('.item').dataset.id, v = st[id] || {};
+  const want = b.classList.contains('m-ok') ? 'ok' : 'bad';
+  v.s = v.s === want ? '' : want; st[id] = v; save(); paint();
+  if (v.s === 'bad') document.getElementById('n-' + id).focus();
+});
+box.addEventListener('input', e => {
+  if (e.target.tagName !== 'TEXTAREA') return;
+  const id = e.target.id.slice(2); (st[id] = st[id] || {}).n = e.target.value; save();
+});
+
+function summary() {
+  const lines = ['Проверка DMR Trekking 0.7.66 / 0.66 (Test-71126)'];
+  let ok = 0, bad = 0, left = 0; const bads = [];
+  CHECK.forEach((sec, si) => sec.items.forEach(([d], ii) => {
+    const v = st[`${si}-${ii}`] || {};
+    if (v.s === 'ok') ok++; else if (v.s === 'bad') { bad++; bads.push(`✗ ${sec.t}: ${strip(d)}${v.n ? ' — ' + v.n.trim() : ''}`); } else left++;
+  }));
+  lines.push(`ок ${ok} · не так ${bad} · не проверено ${left}`);
+  if (bads.length) lines.push('', ...bads); else lines.push('Неполадок не нашёл.');
+  return lines.join('\n');
+}
+document.getElementById('copyBtn').onclick = async () => {
+  const text = summary(), msg = document.getElementById('copied'), out = document.getElementById('outText');
+  try { await navigator.clipboard.writeText(text); msg.textContent = 'Итог скопирован — вставь его сообщением боту или в группу техподдержки.'; out.hidden = true; }
+  catch { out.hidden = false; out.value = text; out.focus(); out.select(); msg.textContent = 'Скопировать автоматически не вышло — итог выделен внизу, скопируй его вручную.'; }
+};
+const resetBtn = document.getElementById('resetBtn');
+resetBtn.onclick = () => {
+  if (resetBtn.dataset.arm !== '1') { resetBtn.dataset.arm = '1'; resetBtn.textContent = 'Точно стереть отметки?'; setTimeout(() => { resetBtn.dataset.arm = ''; resetBtn.textContent = 'Начать заново'; }, 4000); return; }
+  st = {}; save(); resetBtn.dataset.arm = ''; resetBtn.textContent = 'Начать заново'; paint();
+  document.getElementById('copied').textContent = 'Отметки стёрты.';
+};
+paint();
+</script>
+</body>
+</html>
